@@ -16,8 +16,12 @@ import java.util.Optional;
 @Controller
 public class MainController {
 
+    private final Eixampledb eixampledb;
+
     @Autowired
-    private Eixampledb eixampledb;
+    public MainController(Eixampledb eixampledb) {
+        this.eixampledb = eixampledb;
+    }
 
     @RequestMapping(path = "/{key}", method = RequestMethod.GET)
     public ResponseEntity<String> get(@PathVariable("key") String key) {
