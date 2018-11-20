@@ -1,13 +1,13 @@
-package com.eixampledb.core;
+package com.eixampledb.core.api;
 
-public class EixamplebdEntry {
+public class EixampleDbEntry {
 
     private final String key;
     private final String value;
     private final long creationTimestamp;
     private final long lastupdateTimestamp;
 
-    public EixamplebdEntry(String key, String value, long creationTimestamp, long lastupdateTimestamp) {
+    public EixampleDbEntry(String key, String value, long creationTimestamp, long lastupdateTimestamp) {
         this.key = key;
         this.value = value;
         this.creationTimestamp = creationTimestamp;
