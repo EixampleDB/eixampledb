@@ -9,13 +9,13 @@ import com.eixampledb.core.api.response.DeleteResponse;
 import com.eixampledb.core.api.response.GetResponse;
 import com.eixampledb.core.api.response.SetResponse;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class EixampleDbMapImplementation implements EixampleDbBackend {
 
-    private final Map<String, EixampleDbEntry> map = new HashMap<>();
+    private final ConcurrentMap<String, EixampleDbEntry> map = new ConcurrentHashMap<>();
 
     @Override
     public GetResponse get(GetRequest getRequest) {
@@ -25,14 +25,13 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
 
     @Override
     public SetResponse set(SetRequest setRequest) {
-        Optional<EixampleDbEntry> entry = Optional.ofNullable(map.get(setRequest.getKey()));
-        EixampleDbEntry newEntry;
-        if (entry.isPresent()) {
-            newEntry = new EixampleDbEntry(setRequest.getKey(), setRequest.getValue(), entry.get().getCreationTimestamp(), System.currentTimeMillis());
-        } else {
-            newEntry = new EixampleDbEntry(setRequest.getKey(), setRequest.getValue(), System.currentTimeMillis(), System.currentTimeMillis());
-        }
-        map.put(setRequest.getKey(), newEntry);
+        EixampleDbEntry newEntry = map.compute(setRequest.getKey(), (key, entry) -> {
+            long updateTimestamp = System.currentTimeMillis();
+            if (entry != null) {
+                updateTimestamp = entry.getLastupdateTimestamp();
+            }
+           return new EixampleDbEntry(setRequest.getKey(), setRequest.getValue(), updateTimestamp, System.currentTimeMillis());
+        });
         return new SetResponse(setRequest, true, newEntry);
     }
 
