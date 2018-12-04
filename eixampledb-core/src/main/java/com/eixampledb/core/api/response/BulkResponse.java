@@ -8,8 +8,9 @@ public class BulkResponse extends Response<BulkRequest> {
 
     private String informe;
 
-    BulkResponse(BulkRequest request, boolean success) {
+    public BulkResponse(BulkRequest request, boolean success, String informe) {
         super(request, success);
+        this.informe = informe;
     }
 
 }

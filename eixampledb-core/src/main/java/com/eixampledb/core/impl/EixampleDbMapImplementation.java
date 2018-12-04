@@ -52,16 +52,36 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
     @Override
     public BulkResponse bulkOperation(BulkRequest bulkRequest){
         List<OperationDTO> operations = bulkRequest.getOperatioons();
+        String informe = "";
         for(OperationDTO operationDTO : operations){
             if(operationDTO.getKey().equals(TipoOperacion.GET)){
-                //TODO llamar para hacer el get
+                EixampleDbEntry entry = map.get(operationDTO.getParameters());
+
+                informe += "GET, KEY:"+operationDTO.getKey()+", VALUE: "+entry.getValue()+"\n";
+
             }else if(operationDTO.getKey().equals(TipoOperacion.DELETE)){
+
+                EixampleDbEntry entry = map.remove(operationDTO.getKey());
+                if(entry != null){
+                    informe += "DELETE, KEY:"+operationDTO.getKey()+", VALUE: OK\n";
+                }else{
+                    informe += "DELETE, KEY:"+operationDTO.getKey()+", VALUE: FAIL\n";
+                }
 
             }else if (operationDTO.getKey().equals(TipoOperacion.SET)){
 
+                EixampleDbEntry entryToPut = new EixampleDbEntry(operationDTO.getKey(),operationDTO.getParameters(),
+                        System.currentTimeMillis(),System.currentTimeMillis()
+                        );
+                EixampleDbEntry entry = map.put(operationDTO.getKey(),entryToPut);
+                if(entry != null){
+                    informe += "SET, KEY:"+operationDTO.getKey()+", VALUE: OK\n";
+                }else{
+                    informe += "SET, KEY:"+operationDTO.getKey()+", VALUE: FAIL\n";
+                }
             }
         }
-        return null;
+        return new BulkResponse(bulkRequest,true,informe);
     }
 
 
