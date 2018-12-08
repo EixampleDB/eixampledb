@@ -21,10 +21,13 @@ public class HitMonitoringMiddleware implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        if(request.getMethod().equals("GET") && response.getStatus() == 200) {
-            performanceMonitoringService.addHit(true);
-        } else {
-            performanceMonitoringService.addHit(false);
+
+        if (request.getMethod().equals("GET")) {
+            if (response.getStatus() == 200) {
+                performanceMonitoringService.addHit(true);
+            } else {
+                performanceMonitoringService.addHit(false);
+            }
         }
     }
 
