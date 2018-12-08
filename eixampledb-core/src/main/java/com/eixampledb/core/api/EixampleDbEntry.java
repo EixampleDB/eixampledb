@@ -6,12 +6,14 @@ public class EixampleDbEntry {
     private final String value;
     private final long creationTimestamp;
     private final long lastupdateTimestamp;
+    private final int type;
 
-    public EixampleDbEntry(String key, String value, long creationTimestamp, long lastupdateTimestamp) {
+    public EixampleDbEntry(String key, String value, long creationTimestamp, long lastupdateTimestamp, int type) {
         this.key = key;
         this.value = value;
         this.creationTimestamp = creationTimestamp;
         this.lastupdateTimestamp = lastupdateTimestamp;
+        this.type = type;
     }
 
     public String getKey() {
@@ -30,4 +32,5 @@ public class EixampleDbEntry {
         return lastupdateTimestamp;
     }
 
+    public int getType(){ return this.type; }
 }

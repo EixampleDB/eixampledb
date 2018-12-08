@@ -34,7 +34,48 @@ public class MainController {
 
     @RequestMapping(path = "/{key}", method = RequestMethod.POST)
     public ResponseEntity set(@PathVariable("key") String key, @RequestBody String value) {
-        SetResponse setResponse = eixampledb.set(new SetRequest(key, value));
+        String val;
+        int type;
+        if (value.startsWith("NUM")){
+            val = value.substring(4, Math.min(value.length(), value.length()));
+            type = 1;
+        }else if (value.startsWith("STR")){
+            val = value.substring(4, Math.min(value.length(), value.length()));
+            type = 0;
+        }
+        else{
+            val = value;
+            type = 0;
+        }
+        SetResponse setResponse = eixampledb.set(new SetRequest(key, val, type));
+        return ResponseEntity.ok().build();
+    }
+
+    @RequestMapping(path = "/{key}", method = RequestMethod.PUT)
+    public ResponseEntity operation(@PathVariable("key") String key, @RequestBody String value) {
+        GetResponse getResponse = eixampledb.get(new GetRequest(key));
+        if (! getResponse.isSuccess()) { //Si la key no existe devolvemos error
+            return ResponseEntity.notFound().build();
+        }
+        String val = getResponse.getEntry().get().getValue(); //Valor de la key
+        int type = getResponse.getEntry().get().getType(); // Tipo de la Key
+
+        if(type == 1) { //Si es un numero
+            if (value.startsWith("INCR")) { //Si la operacion es INCR incrementamos vigiliando si es float/double o int/long
+                if(val.contains(".")){
+                    val = (Double.parseDouble(val)+1.) + "";
+                }else{
+                    val = (Long.parseLong(val)+1) + "";
+                }
+            } else if (value.startsWith("DECR")) {
+                if(val.contains(".")){
+                    val = (Double.parseDouble(val)-1.) + "";
+                }else{
+                    val = (Long.parseLong(val)-1) + "";
+                }
+            }
+        }
+        SetResponse setResponse = eixampledb.set(new SetRequest(key, val, type));
         return ResponseEntity.ok().build();
     }
 

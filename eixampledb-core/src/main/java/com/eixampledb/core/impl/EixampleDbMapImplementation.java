@@ -30,7 +30,7 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
             if (entry != null) {
                 updateTimestamp = entry.getLastupdateTimestamp();
             }
-           return new EixampleDbEntry(setRequest.getKey(), setRequest.getValue(), updateTimestamp, System.currentTimeMillis());
+           return new EixampleDbEntry(setRequest.getKey(), setRequest.getValue(), updateTimestamp, System.currentTimeMillis(), setRequest.getType());
         });
         return new SetResponse(setRequest, true, newEntry);
     }

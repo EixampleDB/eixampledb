@@ -9,5 +9,6 @@ public class SetRequest extends Request implements RequestWithKey {
 
     private final String key;
     private final String value;
+    private final int type;
 
 }
