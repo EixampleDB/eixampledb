@@ -1,12 +1,14 @@
 package com.eixampledb.core.api.request;
 
 import com.eixampledb.core.model.OperationDTO;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
+
 import java.util.List;
 
 @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class BulkRequest extends Request {
     List<OperationDTO> operatioons;
 

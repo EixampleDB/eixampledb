@@ -27,7 +27,7 @@ public class BulkOperationController {
     private final Map<Long,BulkResponse> idsOperations = new ConcurrentHashMap<>();
     private final Random randomGenerator = new Random();
 
-    @RequestMapping(path = "/{key}", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Long> procesarBulkOperation(
             @RequestBody BulkRequest bulkRequest
     ){
