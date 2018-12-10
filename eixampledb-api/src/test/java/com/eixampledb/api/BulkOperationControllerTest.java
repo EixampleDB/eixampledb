@@ -17,7 +17,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,7 +39,7 @@ public class BulkOperationControllerTest {
 
 
     @Test
-    public void sendBulkOperationPetition() throws Exception {
+    public void sendBulkOperationPetitionOK() throws Exception {
         List<OperationDTO> operationDTOList = Arrays.asList(
                 OperationDTO.builder()
                         .key("KEY1")
@@ -60,7 +62,14 @@ public class BulkOperationControllerTest {
                 .andReturn();
 
         String informe = mvcGetResult.getResponse().getContentAsString();
-
+        assertThat(informe,equalTo("SET, KEY:KEY1, VALUE: OK, NEW\n"));
         return;
+    }
+
+    @Test
+    public void checkIdNotFound() throws Exception{
+        MvcResult mvcResult = mockMvc.perform(get("/bulk/111"))
+                .andExpect(status().isNotFound()).andReturn();
+
     }
 }

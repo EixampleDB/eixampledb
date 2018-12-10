@@ -54,12 +54,12 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
         List<OperationDTO> operations = bulkRequest.getOperatioons();
         String informe = "";
         for(OperationDTO operationDTO : operations){
-            if(operationDTO.getKey().equals(TipoOperacion.GET)){
+            if(operationDTO.getTipo().equals(TipoOperacion.GET)){
                 EixampleDbEntry entry = map.get(operationDTO.getParameters());
 
                 informe += "GET, KEY:"+operationDTO.getKey()+", VALUE: "+entry.getValue()+"\n";
 
-            }else if(operationDTO.getKey().equals(TipoOperacion.DELETE)){
+            }else if(operationDTO.getTipo().equals(TipoOperacion.DELETE)){
 
                 EixampleDbEntry entry = map.remove(operationDTO.getKey());
                 if(entry != null){
@@ -68,16 +68,16 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
                     informe += "DELETE, KEY:"+operationDTO.getKey()+", VALUE: FAIL\n";
                 }
 
-            }else if (operationDTO.getKey().equals(TipoOperacion.SET)){
+            }else if (operationDTO.getTipo().equals(TipoOperacion.SET)){
 
                 EixampleDbEntry entryToPut = new EixampleDbEntry(operationDTO.getKey(),operationDTO.getParameters(),
                         System.currentTimeMillis(),System.currentTimeMillis()
                         );
                 EixampleDbEntry entry = map.put(operationDTO.getKey(),entryToPut);
                 if(entry != null){
-                    informe += "SET, KEY:"+operationDTO.getKey()+", VALUE: OK\n";
+                    informe += "SET, KEY:"+operationDTO.getKey()+", VALUE: OK, UPDATED\n";
                 }else{
-                    informe += "SET, KEY:"+operationDTO.getKey()+", VALUE: FAIL\n";
+                    informe += "SET, KEY:"+operationDTO.getKey()+", VALUE: OK, NEW\n";
                 }
             }
         }
