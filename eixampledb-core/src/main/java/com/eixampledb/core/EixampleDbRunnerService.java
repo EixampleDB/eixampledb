@@ -3,9 +3,11 @@ package com.eixampledb.core;
 import com.eixampledb.core.api.EixampleDb;
 import com.eixampledb.core.api.EixampleDbBackend;
 import com.eixampledb.core.api.Middleware;
+import com.eixampledb.core.api.request.BulkRequest;
 import com.eixampledb.core.api.request.DeleteRequest;
 import com.eixampledb.core.api.request.GetRequest;
 import com.eixampledb.core.api.request.SetRequest;
+import com.eixampledb.core.api.response.BulkResponse;
 import com.eixampledb.core.api.response.DeleteResponse;
 import com.eixampledb.core.api.response.GetResponse;
 import com.eixampledb.core.api.response.SetResponse;
@@ -53,5 +55,17 @@ public class EixampleDbRunnerService implements EixampleDb {
             middleware.afterDelete(deleteResponse);
         }
         return deleteResponse;
+    }
+
+    @Override
+    public BulkResponse bulkOperation(BulkRequest bulkRequest) {
+        for (Middleware middleware : middlewares) {
+            middleware.beforeDelete(bulkRequest);
+        }
+        BulkResponse bulkResponse = backend.bulkOperation(bulkRequest);
+        for (Middleware middleware : middlewares) {
+            middleware.afterDelete(bulkResponse);
+        }
+        return bulkResponse;
     }
 }

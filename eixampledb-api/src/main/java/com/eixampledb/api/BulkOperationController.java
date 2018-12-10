@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -24,13 +25,17 @@ public class BulkOperationController {
     private final EixampleDb eixampledb;
     private final ExecutorService executorService = Executors.newFixedThreadPool(5);
     private final Map<Long,BulkResponse> idsOperations = new ConcurrentHashMap<>();
-    private final Random randomGenerator;
+    private final Random randomGenerator = new Random();
 
     @RequestMapping(path = "/{key}", method = RequestMethod.POST)
-    public ResponseEntity<Long> procesarBulkOperation(BulkRequest operationDTO){
-        final Long idBulk = randomGenerator.nextLong();
+    public ResponseEntity<Long> procesarBulkOperation(
+            @RequestBody BulkRequest bulkRequest
+    ){
+
+        final Long idBulk =  System.currentTimeMillis()+randomGenerator.nextLong();
+
         executorService.submit(() -> {
-            idsOperations.put(idBulk,eixampledb.bulkOperation(operationDTO));
+            idsOperations.put(idBulk,eixampledb.bulkOperation(bulkRequest));
         });
         return ResponseEntity.ok(idBulk);
 
