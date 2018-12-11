@@ -1,4 +1,6 @@
 package com.eixampledb.api.monitoring;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -7,6 +9,9 @@ import com.sun.management.OperatingSystemMXBean;
 
 @Service
 public class ResourceMonitoringServiceImpl implements ResourceMonitoringService{
+
+    @Autowired
+    private LogStorageService logStorageService;
 
     private OperatingSystemMXBean systemBean = (com.sun.management.OperatingSystemMXBean) ManagementFactory
             .getOperatingSystemMXBean();
@@ -24,12 +29,20 @@ public class ResourceMonitoringServiceImpl implements ResourceMonitoringService{
     }
 
     @Override
-    public float getDiskUsage() {
+    public float getDiskFreeSpace() {
         File baseFile = new File("/");
         long total_space = baseFile.getTotalSpace();
         long free_space = baseFile.getUsableSpace();
 
         return (float) free_space / total_space;
+    }
+
+    @Scheduled(cron = "*/59 * * * * *")
+    private void storeData(){
+        logStorageService.infoMessage("CPU usage: " + getCpuUsage()*100 + "%");
+        logStorageService.infoMessage("RAM usage: " + getRamUsage()*100 + "%");
+        logStorageService.infoMessage("Disk free space: " + getDiskFreeSpace()*100 +"%");
+
     }
 
 }

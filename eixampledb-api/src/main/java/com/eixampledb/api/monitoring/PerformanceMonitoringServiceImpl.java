@@ -1,4 +1,5 @@
 package com.eixampledb.api.monitoring;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,9 @@ public class PerformanceMonitoringServiceImpl implements PerformanceMonitoringSe
     private final AtomicInteger currentOPM = new AtomicInteger(0);
     private volatile float currentHitRate = 0;
     private final AtomicInteger totalReq = new AtomicInteger(0);
+
+    @Autowired
+    private LogStorageService logStorageService;
 
     @Override
     public float getLatency() {
@@ -44,9 +48,16 @@ public class PerformanceMonitoringServiceImpl implements PerformanceMonitoringSe
         setHitRate(newHitRate);
     }
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(cron = "*/59 * * * * *")
     private void storeData(){
+        logStorageService.infoMessage("Latency: " + Float.toString(maxLastMinuteLatency) + " ms");
+        logStorageService.infoMessage("OPM: " + currentOPM.toString() );
+        logStorageService.infoMessage("Hit Rate: " + Float.toString(currentHitRate*100) + "%");
 
+        maxLastMinuteLatency = 0;
+        currentOPM.set(0);
+        currentHitRate = 0;
+        totalReq.set(0);
     }
 
 
