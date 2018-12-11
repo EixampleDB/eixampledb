@@ -13,14 +13,13 @@
         <Console name="Console" target="SYSTEM_OUT" follow="true">
             <PatternLayout pattern="${sys:CONSOLE_LOG_PATTERN}" />
         </Console>
-        <RollingFile name="RollingFile"  filePattern="logs/%d{MM-dd-yyyy-HH-mm}-%i.log.gz" ignoreExceptions="false" >
+        <RollingFile name="RollingFile"  filePattern="logs/%d{MM-dd-yyyy}-%i.log.gz" ignoreExceptions="false" >
             <PatternLayout>
-                <Pattern>%d{yyyy-MM-dd HH:mm:ss} %p %m%n</Pattern>
+                <Pattern>%d{hh-mm-ss} %p %m%n</Pattern>
             </PatternLayout>
             <Policies>
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy size="20 MB" />
-                <TimeBasedTriggeringPolicy interval="2" modulate="true" />
             </Policies>
             <DirectWriteRolloverStrategy maxFiles="5" compressionLevel="2" />
 

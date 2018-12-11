@@ -1,4 +1,5 @@
 package com.eixampledb.api.monitoring;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -42,6 +43,12 @@ public class PerformanceMonitoringServiceImpl implements PerformanceMonitoringSe
         float newHitRate = currentHitRate + ((hitInt - currentHitRate)/totalReq.get());
         setHitRate(newHitRate);
     }
+
+    @Scheduled(fixedRate = 5000)
+    private void storeData(){
+
+    }
+
 
     private synchronized void setHitRate(float hitRate) {
         currentHitRate = hitRate;
