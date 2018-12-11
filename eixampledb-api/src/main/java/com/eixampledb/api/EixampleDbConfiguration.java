@@ -1,6 +1,7 @@
 package com.eixampledb.api;
 
 import com.eixampledb.api.monitoring.middleware.HitMonitoringMiddleware;
+import com.eixampledb.api.monitoring.middleware.OPMMonitoringMiddleware;
 import com.eixampledb.core.EixampleDbBuilder;
 import com.eixampledb.core.api.EixampleDb;
 import com.eixampledb.api.monitoring.middleware.LatencyMonitoringMiddleware;
@@ -30,14 +31,22 @@ public class EixampleDbConfiguration implements WebMvcConfigurer {
         return new HitMonitoringMiddleware();
     }
 
+    @Bean
+    public OPMMonitoringMiddleware opmMonitoringMiddleware() {
+        return new OPMMonitoringMiddleware();
+    }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // Latency middleware
         registry.addInterceptor(latencyMonitoringMiddleware())
-                .excludePathPatterns("/monitoring/*");
+                .excludePathPatterns("/monitor/*");
 
         registry.addInterceptor(hitMonitoringMiddleware())
-                .excludePathPatterns("/monitoring/*");
+                .excludePathPatterns("/monitor/*");
+
+        registry.addInterceptor(opmMonitoringMiddleware())
+                .excludePathPatterns("/monitor/*");
     }
 
 }

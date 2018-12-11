@@ -1,46 +1,35 @@
 package com.eixampledb.api.monitoring;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.io.File;
+import java.lang.management.ManagementFactory;
+import com.sun.management.OperatingSystemMXBean;
 
 @Service
 public class ResourceMonitoringServiceImpl implements ResourceMonitoringService{
 
-    private volatile float cpuUsage = 0;
-    private volatile float ramUsage = 0;
-    private volatile float diskUsage = 0;
-
+    private OperatingSystemMXBean systemBean = (com.sun.management.OperatingSystemMXBean) ManagementFactory
+            .getOperatingSystemMXBean();
 
     @Override
     public float getCpuUsage() {
-        return cpuUsage;
-    }
-
-    @Override
-    public synchronized void updateCpuUsage(float usage) {
-        cpuUsage = usage;
+        return (float)systemBean.getSystemCpuLoad();
     }
 
     @Override
     public float getRamUsage() {
-        return ramUsage;
-    }
-
-    @Override
-    public synchronized void updateRamUsage(float usage) {
-        ramUsage = usage;
+        double totalUsed = systemBean.getTotalPhysicalMemorySize() - systemBean.getFreePhysicalMemorySize();
+        float percent_used = (float) totalUsed / systemBean.getTotalPhysicalMemorySize();
+        return percent_used;
     }
 
     @Override
     public float getDiskUsage() {
-        return diskUsage;
+        File baseFile = new File("/");
+        long total_space = baseFile.getTotalSpace();
+        long free_space = baseFile.getUsableSpace();
+
+        return (float) free_space / total_space;
     }
-
-    @Override
-    public synchronized void updateDiskUsage(float usage) {
-        diskUsage = usage;
-    }
-
-
 
 }
