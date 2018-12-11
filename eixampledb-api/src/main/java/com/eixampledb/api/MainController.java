@@ -1,6 +1,6 @@
 package com.eixampledb.api;
 
-import com.eixampledb.core.api.CoreServices;
+import com.eixampledb.core.CoreServices;
 import com.eixampledb.core.api.EixampleDb;
 import com.eixampledb.core.api.request.DeleteRequest;
 import com.eixampledb.core.api.request.GetRequest;
@@ -21,7 +21,7 @@ import java.util.Map;
 public class MainController {
 
     private final EixampleDb eixampledb;
-    private final CoreServices core;
+    private CoreServices core = new CoreServices();
 
     @RequestMapping(path = "/{key}", method = RequestMethod.GET)
     public ResponseEntity<String> get(@PathVariable("key") String key) {
@@ -65,10 +65,11 @@ public class MainController {
 
         if(type == core.NUM_TYPE) { //If it's a number
             if (operation.equals("INCR")) { //If op is INCR, increase the value caring if it's int/long or float/double
-               core.operation_increment(key, value);
+                value = core.operation_increment(key, value);
             } else if (operation.equals("DECR")) {
-                core.operation_decrement(key, value);
+                value = core.operation_decrement(key, value);
             }
+            SetResponse setResponse = eixampledb.set(new SetRequest(key, value, core.NUM_TYPE));
         }else{
             SetResponse setResponse = eixampledb.set(new SetRequest(key, value, type));
         }
