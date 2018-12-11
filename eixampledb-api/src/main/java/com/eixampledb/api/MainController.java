@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -30,12 +31,12 @@ public class MainController {
     }
 
     @RequestMapping(path = "/{key}", method = RequestMethod.POST)
-    public ResponseEntity set(@PathVariable("key") String key, @RequestBody String value @RequestHeader Map<String,String> header) {
+    public ResponseEntity set(@PathVariable("key") String key, @RequestBody String value, @RequestHeader Map<String,String> header) {
         String search = header.get("search");
         int searchType = 0;
         if (search == null) search = "";
         if (search.equals("STARTS")) searchType = 1;
-        else (search.equals("REGEX") searchType = 2;
+        else if (search.equals("REGEX")) searchType = 2;
         //TODO Send request if searchtype 1 to tree database??
 
 
