@@ -1,5 +1,6 @@
 package com.eixampledb.api;
 
+import com.eixampledb.core.api.CoreServices;
 import com.eixampledb.core.api.EixampleDb;
 import com.eixampledb.core.api.request.DeleteRequest;
 import com.eixampledb.core.api.request.GetRequest;
@@ -20,7 +21,7 @@ import java.util.Map;
 public class MainController {
 
     private final EixampleDb eixampledb;
-    private static final int NUM_TYPE = 1;
+    private final CoreServices core;
 
     @RequestMapping(path = "/{key}", method = RequestMethod.GET)
     public ResponseEntity<String> get(@PathVariable("key") String key) {
@@ -62,39 +63,17 @@ public class MainController {
             return ResponseEntity.notFound().build();
         }
 
-        if(type == NUM_TYPE) { //If it's a number
+        if(type == core.NUM_TYPE) { //If it's a number
             if (operation.equals("INCR")) { //If op is INCR, increase the value caring if it's int/long or float/double
-               operation_increment(key, value);
+               core.operation_increment(key, value);
             } else if (operation.equals("DECR")) {
-                operation_decrement(key, value);
+                core.operation_decrement(key, value);
             }
         }else{
             SetResponse setResponse = eixampledb.set(new SetRequest(key, value, type));
         }
 
         return ResponseEntity.ok().build();
-    }
-
-    private void operation_increment(String key, String value){
-
-        if(value.contains(".")){
-            value = (Double.parseDouble(value)+1.) + "";
-        }else{
-            value = (Long.parseLong(value)+1) + "";
-        }
-
-        SetResponse setResponse = eixampledb.set(new SetRequest(key, value, NUM_TYPE));
-    }
-
-    private void operation_decrement(String key, String value){
-
-        if(value.contains(".")){
-            value = (Double.parseDouble(value)-1.) + "";
-        }else{
-            value = (Long.parseLong(value)-1) + "";
-        }
-
-        SetResponse setResponse = eixampledb.set(new SetRequest(key, value, NUM_TYPE));
     }
 
     @RequestMapping(path = "/{key}", method = RequestMethod.DELETE)
