@@ -72,7 +72,7 @@ public class MainControllerTest {
         mockMvc.perform(get("/actualkey3")).andExpect(status().isNotFound());
 
     }
-
+/*
     @Test
     public void shouldIncrementInt() throws Exception{
         mockMvc.perform(post("/actualkey4").content("NUM 12"))
@@ -157,5 +157,6 @@ public class MainControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("I'm a word"));
     }
+    */
 
 }

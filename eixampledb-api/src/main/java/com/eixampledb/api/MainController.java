@@ -11,16 +11,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
 public class MainController {
 
     private final EixampleDb eixampledb;
+    private static final int NUM_TYPE = 1;
 
     @RequestMapping(path = "/{key}", method = RequestMethod.GET)
     public ResponseEntity<String> get(@PathVariable("key") String key) {
@@ -33,50 +33,67 @@ public class MainController {
     }
 
     @RequestMapping(path = "/{key}", method = RequestMethod.POST)
-    public ResponseEntity set(@PathVariable("key") String key, @RequestBody String value) {
-        String val;
-        int type;
-        if (value.startsWith("NUM")){
-            val = value.substring(4, Math.min(value.length(), value.length()));
-            type = 1;
-        }else if (value.startsWith("STR")){
-            val = value.substring(4, Math.min(value.length(), value.length()));
-            type = 0;
+    public ResponseEntity set(@PathVariable("key") String key, @RequestBody String value, @RequestHeader Map<String,String> header) {
+
+        //Comprobar que si type no existe el programa no peta y devuelve null
+        String type = header.get("type");
+        int t;
+        if (type.equals("NUM")){
+            t = 1;
+        }else if (type.equals("STR")){
+            t = 0;
         }
         else{
-            val = value;
-            type = 0;
+            t = 0;
         }
-        SetResponse setResponse = eixampledb.set(new SetRequest(key, val, type));
+        SetResponse setResponse = eixampledb.set(new SetRequest(key, value, t));
         return ResponseEntity.ok().build();
     }
 
     @RequestMapping(path = "/{key}", method = RequestMethod.PUT)
-    public ResponseEntity operation(@PathVariable("key") String key, @RequestBody String value) {
+    public ResponseEntity operation(@PathVariable("key") String key, @RequestHeader("op") String operation) {
+
         GetResponse getResponse = eixampledb.get(new GetRequest(key));
+        String value = getResponse.getEntry().get().getValue(); //Valor de la key
+        int type = getResponse.getEntry().get().getType(); // Tipo de la Key
+
         if (! getResponse.isSuccess()) { //Si la key no existe devolvemos error
             return ResponseEntity.notFound().build();
         }
-        String val = getResponse.getEntry().get().getValue(); //Valor de la key
-        int type = getResponse.getEntry().get().getType(); // Tipo de la Key
 
-        if(type == 1) { //Si es un numero
-            if (value.startsWith("INCR")) { //Si la operacion es INCR incrementamos vigiliando si es float/double o int/long
-                if(val.contains(".")){
-                    val = (Double.parseDouble(val)+1.) + "";
-                }else{
-                    val = (Long.parseLong(val)+1) + "";
-                }
-            } else if (value.startsWith("DECR")) {
-                if(val.contains(".")){
-                    val = (Double.parseDouble(val)-1.) + "";
-                }else{
-                    val = (Long.parseLong(val)-1) + "";
-                }
+        if(type == NUM_TYPE) { //Si es un numero
+            if (operation.equals("INCR")) { //Si la operacion es INCR incrementamos vigiliando si es float/double o int/long
+               operation_increment(key, value);
+            } else if (operation.equals("DECR")) {
+                operation_decrement(key, value);
             }
+        }else{
+            SetResponse setResponse = eixampledb.set(new SetRequest(key, value, type));
         }
-        SetResponse setResponse = eixampledb.set(new SetRequest(key, val, type));
+
         return ResponseEntity.ok().build();
+    }
+
+    private void operation_increment(String key, String value){
+
+        if(value.contains(".")){
+            value = (Double.parseDouble(value)+1.) + "";
+        }else{
+            value = (Long.parseLong(value)+1) + "";
+        }
+
+        SetResponse setResponse = eixampledb.set(new SetRequest(key, value, NUM_TYPE));
+    }
+
+    private void operation_decrement(String key, String value){
+
+        if(value.contains(".")){
+            value = (Double.parseDouble(value)-1.) + "";
+        }else{
+            value = (Long.parseLong(value)-1) + "";
+        }
+
+        SetResponse setResponse = eixampledb.set(new SetRequest(key, value, NUM_TYPE));
     }
 
     @RequestMapping(path = "/{key}", method = RequestMethod.DELETE)
