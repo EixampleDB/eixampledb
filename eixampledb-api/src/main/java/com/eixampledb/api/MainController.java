@@ -34,10 +34,11 @@ public class MainController {
 
     @RequestMapping(path = "/{key}", method = RequestMethod.POST)
     public ResponseEntity set(@PathVariable("key") String key, @RequestBody String value, @RequestHeader Map<String,String> header) {
-
-        //Comprobar que si type no existe el programa no peta y devuelve null
         String type = header.get("type");
         int t;
+        if (type == null){
+            type = "";
+        }
         if (type.equals("NUM")){
             t = 1;
         }else if (type.equals("STR")){
@@ -54,15 +55,15 @@ public class MainController {
     public ResponseEntity operation(@PathVariable("key") String key, @RequestHeader("op") String operation) {
 
         GetResponse getResponse = eixampledb.get(new GetRequest(key));
-        String value = getResponse.getEntry().get().getValue(); //Valor de la key
-        int type = getResponse.getEntry().get().getType(); // Tipo de la Key
+        String value = getResponse.getEntry().get().getValue(); //Value of the key
+        int type = getResponse.getEntry().get().getType(); // Type of the key
 
-        if (! getResponse.isSuccess()) { //Si la key no existe devolvemos error
+        if (! getResponse.isSuccess()) { //If the key doesn't exist return error
             return ResponseEntity.notFound().build();
         }
 
-        if(type == NUM_TYPE) { //Si es un numero
-            if (operation.equals("INCR")) { //Si la operacion es INCR incrementamos vigiliando si es float/double o int/long
+        if(type == NUM_TYPE) { //If it's a number
+            if (operation.equals("INCR")) { //If op is INCR, increase the value caring if it's int/long or float/double
                operation_increment(key, value);
             } else if (operation.equals("DECR")) {
                 operation_decrement(key, value);
