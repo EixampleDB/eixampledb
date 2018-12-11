@@ -36,7 +36,7 @@ public class MainController {
         if (search == null) search = "";
         if (search.equals("STARTS")) searchType = 1;
         else (search.equals("REGEX") searchType = 2;
-
+        //TODO Send request if searchtype 1 to tree database??
 
 
         SetResponse setResponse = eixampledb.set(new SetRequest(key, value, searchType));
