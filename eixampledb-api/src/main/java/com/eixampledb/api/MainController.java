@@ -41,14 +41,14 @@ public class MainController {
             type = "";
         }
         if (type.equals("NUM")){
-            t = 1;
+            t = core.NUM_TYPE;
         }else if (type.equals("STR")){
-            t = 0;
+            t = core.STRING;
         }
         else{
-            t = 0;
+            t = core.STRING;
         }
-        SetResponse setResponse = eixampledb.set(new SetRequest(key, value, t));
+        eixampledb.set(new SetRequest(key, value, t));
         return ResponseEntity.ok().build();
     }
 
