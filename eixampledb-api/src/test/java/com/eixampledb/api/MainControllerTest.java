@@ -8,9 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -71,4 +69,90 @@ public class MainControllerTest {
         mockMvc.perform(get("/actualkey3")).andExpect(status().isNotFound());
 
     }
+
+    @Test
+    public void shouldIncrementInt() throws Exception{
+        mockMvc.perform(post("/actualkey4").content("12").header("type","NUM"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/actualkey4"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("12"));
+
+        mockMvc.perform(put("/actualkey4").header("op","INCR"))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/actualkey4"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("13"));
+    }
+
+    @Test
+    public void shouldDecrementInt() throws Exception{
+        mockMvc.perform(post("/actualkey5").content("12").header("type","NUM"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/actualkey5"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("12"));
+
+        mockMvc.perform(put("/actualkey5").header("op","DECR"))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/actualkey5"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("11"));
+    }
+
+    @Test
+    public void shouldIncrementFloat() throws Exception{
+        mockMvc.perform(post("/actualkey6").content("12.25").header("type","NUM"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/actualkey6"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("12.25"));
+
+        mockMvc.perform(put("/actualkey6").header("op","INCR"))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/actualkey6"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("13.25"));
+    }
+
+    @Test
+    public void shouldDecrementFloat() throws Exception{
+        mockMvc.perform(post("/actualkey7").content("12.25").header("type","NUM"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/actualkey7"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("12.25"));
+
+        mockMvc.perform(put("/actualkey7").header("op","DECR"))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/actualkey7"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("11.25"));
+    }
+
+    @Test
+    public void shouldDoNothing() throws Exception {
+        mockMvc.perform(post("/actualkey8").content("I'm a word").header("type", "STR"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/actualkey8"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("I'm a word"));
+
+        mockMvc.perform(put("/actualkey8").header("op", "INCR"))
+                .andExpect(status().isBadRequest());
+
+        mockMvc.perform(get("/actualkey8"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("I'm a word"));
+    }
+
 }

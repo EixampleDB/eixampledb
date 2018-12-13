@@ -1,11 +1,7 @@
 package com.eixampledb.core.api;
 
-import com.eixampledb.core.api.request.DeleteRequest;
-import com.eixampledb.core.api.request.GetRequest;
-import com.eixampledb.core.api.request.SetRequest;
-import com.eixampledb.core.api.response.DeleteResponse;
-import com.eixampledb.core.api.response.GetResponse;
-import com.eixampledb.core.api.response.SetResponse;
+import com.eixampledb.core.api.request.*;
+import com.eixampledb.core.api.response.*;
 
 public interface Middleware {
 
@@ -18,4 +14,10 @@ public interface Middleware {
     void beforeDelete(DeleteRequest deleteRequest);
     void afterDelete(DeleteResponse deleteResponse);
 
+    void beforeIncr(IncrRequest request);
+    void afterIncr(IncrResponse response);
+
+    void beforeDecr(DecrRequest request);
+    void afterDecr(DecrResponse response);
+    
 }

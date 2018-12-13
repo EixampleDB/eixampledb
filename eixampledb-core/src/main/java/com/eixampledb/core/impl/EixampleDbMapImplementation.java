@@ -2,12 +2,8 @@ package com.eixampledb.core.impl;
 
 import com.eixampledb.core.api.EixampleDbBackend;
 import com.eixampledb.core.api.EixampleDbEntry;
-import com.eixampledb.core.api.request.DeleteRequest;
-import com.eixampledb.core.api.request.GetRequest;
-import com.eixampledb.core.api.request.SetRequest;
-import com.eixampledb.core.api.response.DeleteResponse;
-import com.eixampledb.core.api.response.GetResponse;
-import com.eixampledb.core.api.response.SetResponse;
+import com.eixampledb.core.api.request.*;
+import com.eixampledb.core.api.response.*;
 
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,14 +21,45 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
 
     @Override
     public SetResponse set(SetRequest setRequest) {
-        EixampleDbEntry newEntry = map.compute(setRequest.getKey(), (key, entry) -> {
-            long updateTimestamp = System.currentTimeMillis();
-            if (entry != null) {
-                updateTimestamp = entry.getLastupdateTimestamp();
-            }
-           return new EixampleDbEntry(setRequest.getKey(), setRequest.getValue(), updateTimestamp, System.currentTimeMillis());
-        });
+        Object value = setRequest.getType().isNumber() ? NumberUtils.parse(setRequest.getValue()) : setRequest.getValue();
+        EixampleDbEntry newEntry = map.compute(setRequest.getKey(), (key, entry) -> new EixampleDbEntry(
+                setRequest.getKey(),
+                value,
+                creationTimestamp(entry),
+                System.currentTimeMillis(),
+                setRequest.getType()
+        ));
         return new SetResponse(setRequest, true, newEntry);
+    }
+
+    @Override
+    public IncrResponse incr(IncrRequest request) {
+        EixampleDbEntry newEntry = map.computeIfPresent(request.getKey(), (key, entry) -> new EixampleDbEntry(
+                request.getKey(),
+                NumberUtils.incr(entry.getValue()),
+                creationTimestamp(entry),
+                System.currentTimeMillis(),
+                entry.getType()));
+        if (newEntry != null) {
+            return new IncrResponse(request, true, Optional.of(newEntry));
+        } else {
+            return new IncrResponse(request, false, Optional.empty());
+        }
+    }
+
+    @Override
+    public DecrResponse decr(DecrRequest request) {
+        EixampleDbEntry newEntry = map.computeIfPresent(request.getKey(), (key, entry) -> new EixampleDbEntry(
+                request.getKey(),
+                NumberUtils.decr(entry.getValue()),
+                creationTimestamp(entry),
+                System.currentTimeMillis(),
+                entry.getType()));
+        if (newEntry != null) {
+            return new DecrResponse(request, true, Optional.of(newEntry));
+        } else {
+            return new DecrResponse(request, false, Optional.empty());
+        }
     }
 
     @Override
@@ -40,5 +67,13 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
         Optional<EixampleDbEntry> entry =  Optional.ofNullable(map.remove(deleteRequest.getKey()));
         return new DeleteResponse(deleteRequest, entry.isPresent(), entry);
 
+    }
+
+    private long creationTimestamp(EixampleDbEntry entry) {
+        long creationTimestamp = System.currentTimeMillis();
+        if (entry != null) {
+            creationTimestamp = entry.getCreationTimestamp();
+        }
+        return creationTimestamp;
     }
 }
