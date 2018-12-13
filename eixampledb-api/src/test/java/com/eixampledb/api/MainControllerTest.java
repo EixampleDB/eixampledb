@@ -8,10 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -83,7 +80,7 @@ public class MainControllerTest {
                 .andExpect(content().string("12"));
 
         mockMvc.perform(put("/actualkey4").header("op","INCR"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         mockMvc.perform(get("/actualkey4"))
                 .andExpect(status().isOk())
@@ -100,7 +97,7 @@ public class MainControllerTest {
                 .andExpect(content().string("12"));
 
         mockMvc.perform(put("/actualkey5").header("op","DECR"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         mockMvc.perform(get("/actualkey5"))
                 .andExpect(status().isOk())
@@ -117,7 +114,7 @@ public class MainControllerTest {
                 .andExpect(content().string("12.25"));
 
         mockMvc.perform(put("/actualkey6").header("op","INCR"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         mockMvc.perform(get("/actualkey6"))
                 .andExpect(status().isOk())
@@ -134,7 +131,7 @@ public class MainControllerTest {
                 .andExpect(content().string("12.25"));
 
         mockMvc.perform(put("/actualkey7").header("op","DECR"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         mockMvc.perform(get("/actualkey7"))
                 .andExpect(status().isOk())
@@ -151,7 +148,7 @@ public class MainControllerTest {
                 .andExpect(content().string("I'm a word"));
 
         mockMvc.perform(put("/actualkey8").header("op", "INCR"))
-                .andExpect(status().isOk());
+                .andExpect(status().isBadRequest());
 
         mockMvc.perform(get("/actualkey8"))
                 .andExpect(status().isOk())

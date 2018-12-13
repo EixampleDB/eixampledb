@@ -3,12 +3,12 @@ package com.eixampledb.core.api;
 public class EixampleDbEntry {
 
     private final String key;
-    private final String value;
+    private final Object value;
     private final long creationTimestamp;
     private final long lastupdateTimestamp;
-    private final int type;
+    private final ValueType type;
 
-    public EixampleDbEntry(String key, String value, long creationTimestamp, long lastupdateTimestamp, int type) {
+    public EixampleDbEntry(String key, Object value, long creationTimestamp, long lastupdateTimestamp, ValueType type) {
         this.key = key;
         this.value = value;
         this.creationTimestamp = creationTimestamp;
@@ -20,7 +20,7 @@ public class EixampleDbEntry {
         return key;
     }
 
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 
@@ -32,5 +32,5 @@ public class EixampleDbEntry {
         return lastupdateTimestamp;
     }
 
-    public int getType(){ return this.type; }
+    public ValueType getType(){ return this.type; }
 }
