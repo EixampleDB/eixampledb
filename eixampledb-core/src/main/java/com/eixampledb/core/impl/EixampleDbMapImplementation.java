@@ -25,6 +25,7 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
     int searchType = 0;
     if(setRequest.getSearchType().isStarts()) searchType = 1;
     else if (setRequest.getSearchType().isRegex()) searchType = 2;
+    EixampleDbEntry newEntry = null;
     switch(searchType){
         case 1:
             //TODO Crear arbol para busqueda prefijos
@@ -35,7 +36,7 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
             //TODO Busqueda Regular expression en BD
             //BUSQUEDA KEYS -> OPERAR LAS KEYS
             break;
-        default:  EixampleDbEntry newEntry = map.compute(setRequest.getKey(), (key, entry) -> new EixampleDbEntry(
+        default: newEntry  = map.compute(setRequest.getKey(), (key, entry) -> new EixampleDbEntry(
                 setRequest.getKey(),
                 value,
                 creationTimestamp(entry),
