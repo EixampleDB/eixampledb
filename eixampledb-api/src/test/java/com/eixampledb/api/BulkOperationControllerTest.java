@@ -68,7 +68,7 @@ public class BulkOperationControllerTest {
                 .andReturn();
 
         String report = mvcGetResult.getResponse().getContentAsString();
-        assertThat(report,equalTo("SET, KEY:KEY1, VALUE: OK, NEW\nINCR, KEY:NUMERIC, VALUE: not found\n"));
+        assertThat(report,equalTo("SET, KEY:KEY1, VALUE: OK\nINCR, KEY:NUMERIC, VALUE: not found\n"));
         return;
     }
 
