@@ -3,17 +3,13 @@ package com.eixampledb.core;
 import com.eixampledb.core.api.EixampleDb;
 import com.eixampledb.core.api.EixampleDbBackend;
 import com.eixampledb.core.api.Middleware;
-import com.eixampledb.core.api.request.BulkRequest;
-import com.eixampledb.core.api.request.DeleteRequest;
-import com.eixampledb.core.api.request.GetRequest;
-import com.eixampledb.core.api.request.SetRequest;
-import com.eixampledb.core.api.response.BulkResponse;
-import com.eixampledb.core.api.response.DeleteResponse;
-import com.eixampledb.core.api.response.GetResponse;
-import com.eixampledb.core.api.response.SetResponse;
+import com.eixampledb.core.api.request.*;
+import com.eixampledb.core.api.response.*;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 @RequiredArgsConstructor
 public class EixampleDbRunnerService implements EixampleDb {
@@ -23,38 +19,38 @@ public class EixampleDbRunnerService implements EixampleDb {
 
     @Override
     public GetResponse get(GetRequest getRequest) {
-        for (Middleware middleware : middlewares) {
-            middleware.beforeGet(getRequest);
-        }
-        GetResponse getResponse = backend.get(getRequest);
-        for (Middleware middleware : middlewares) {
-            middleware.afterGet(getResponse);
-        }
-        return getResponse;
+        return exec(getRequest, Middleware::beforeGet, Middleware::afterGet, backend::get);
     }
 
     @Override
     public SetResponse set(SetRequest setRequest) {
-        for (Middleware middleware : middlewares) {
-            middleware.beforeSet(setRequest);
-        }
-        SetResponse setResponse = backend.set(setRequest);
-        for (Middleware middleware : middlewares) {
-            middleware.afterSet(setResponse);
-        }
-        return setResponse;
+        return exec(setRequest, Middleware::beforeSet, Middleware::afterSet, backend::set);
+    }
+
+    @Override
+    public IncrResponse incr(IncrRequest incrRequest) {
+        return exec(incrRequest, Middleware::beforeIncr, Middleware::afterIncr, backend::incr);
+    }
+
+    @Override
+    public DecrResponse decr(DecrRequest decrRequest) {
+        return exec(decrRequest, Middleware::beforeDecr, Middleware::afterDecr, backend::decr);
     }
 
     @Override
     public DeleteResponse delete(DeleteRequest deleteRequest) {
+        return exec(deleteRequest, Middleware::beforeDelete, Middleware::afterDelete, backend::delete);
+    }
+
+    private <RQ,RP> RP exec(RQ request, BiConsumer<Middleware, RQ> before, BiConsumer<Middleware, RP> after, Function<RQ,RP> delegate) {
         for (Middleware middleware : middlewares) {
-            middleware.beforeDelete(deleteRequest);
+            before.accept(middleware, request);
         }
-        DeleteResponse deleteResponse = backend.delete(deleteRequest);
+        RP response = delegate.apply(request);
         for (Middleware middleware : middlewares) {
-            middleware.afterDelete(deleteResponse);
+            after.accept(middleware, response);
         }
-        return deleteResponse;
+        return response;
     }
 
     @Override
@@ -68,4 +64,5 @@ public class EixampleDbRunnerService implements EixampleDb {
         }
         return bulkResponse;
     }
+
 }

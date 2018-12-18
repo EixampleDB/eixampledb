@@ -3,6 +3,8 @@ package com.eixampledb.core.model;
 import com.eixampledb.core.enums.OperationType;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -14,5 +16,7 @@ public class OperationDTO {
 
     private OperationType type;
 
-    private String parameters;
+    private String value;
+
+    private List<String> parameters;
 }
