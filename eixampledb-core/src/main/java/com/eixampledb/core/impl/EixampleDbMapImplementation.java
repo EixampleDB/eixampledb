@@ -22,9 +22,9 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
     @Override
     public SetResponse set(SetRequest setRequest) {
     Object value = setRequest.getType().isNumber() ? NumberUtils.parse(setRequest.getValue()) : setRequest.getValue();
-    Object searchType = 0;
-    if(setRequest.getSearch().isStarts()) searchType = 1;
-    else if (setRequest.getSearch().isRegex()) searchType = 2;
+    int searchType = 0;
+    if(setRequest.getSearchType().isStarts()) searchType = 1;
+    else if (setRequest.getSearchType().isRegex()) searchType = 2;
     switch(searchType){
         case 1:
             //TODO Crear arbol para busqueda prefijos
