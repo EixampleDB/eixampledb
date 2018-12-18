@@ -4,6 +4,7 @@ import com.eixampledb.core.CoreServices;
 import com.eixampledb.core.api.EixampleDb;
 import com.eixampledb.core.api.Operation;
 import com.eixampledb.core.api.ValueType;
+import com.eixampledb.core.api.SearchType;
 import com.eixampledb.core.api.request.*;
 import com.eixampledb.core.api.response.DeleteResponse;
 import com.eixampledb.core.api.response.GetResponse;
@@ -36,7 +37,7 @@ public class MainController {
     public ResponseEntity set(@PathVariable("key") String key,
                               @RequestBody String value,
                               @RequestHeader(name = "type", defaultValue = "STR", required = false) ValueType valueType,
-                              @RequestHeader (name = "search", defaultValue = 0, required = false) ValueType searchType ) {
+                              @RequestHeader (name = "search", defaultValue = "DEF", required = false) SearchType searchType ) {
             /*
             String search = header.get("search");
             int searchType = 0;
