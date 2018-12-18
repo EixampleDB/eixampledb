@@ -28,7 +28,7 @@ public class BulkOperationController {
     private final Random randomGenerator = new Random();
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Long> procesarBulkOperation(
+    public ResponseEntity<Long> processBulkOperation(
             @RequestBody BulkRequest bulkRequest
     ){
 
@@ -42,11 +42,11 @@ public class BulkOperationController {
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<String> consultarEstadoOperacion(
+    public ResponseEntity<String> checkBulkOperationStatus(
             @PathVariable("id") Long idOperation
     ) {
         if (idsOperations.containsKey(idOperation)) {
-            return ResponseEntity.ok(idsOperations.get(idOperation).getInforme());
+            return ResponseEntity.ok(idsOperations.get(idOperation).getReport());
         }
         return ResponseEntity.notFound().build();
     }

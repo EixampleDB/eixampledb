@@ -6,11 +6,11 @@ import lombok.Getter;
 @Getter
 public class BulkResponse extends Response<BulkRequest> {
 
-    private String informe;
+    private String report;
 
-    public BulkResponse(BulkRequest request, boolean success, String informe) {
+    public BulkResponse(BulkRequest request, boolean success, String report) {
         super(request, success);
-        this.informe = informe;
+        this.report = report;
     }
 
 }

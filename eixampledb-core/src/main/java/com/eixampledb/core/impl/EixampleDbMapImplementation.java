@@ -10,15 +10,13 @@ import com.eixampledb.core.api.response.BulkResponse;
 import com.eixampledb.core.api.response.DeleteResponse;
 import com.eixampledb.core.api.response.GetResponse;
 import com.eixampledb.core.api.response.SetResponse;
-import com.eixampledb.core.enums.TipoOperacion;
+import com.eixampledb.core.enums.OperationType;
 import com.eixampledb.core.model.OperationDTO;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class EixampleDbMapImplementation implements EixampleDbBackend {
 
@@ -52,36 +50,36 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
     @Override
     public BulkResponse bulkOperation(BulkRequest bulkRequest){
         List<OperationDTO> operations = bulkRequest.getOperatioons();
-        String informe = "";
+        String report = "";
         for(OperationDTO operationDTO : operations){
-            if(operationDTO.getTipo().equals(TipoOperacion.GET)){
+            if(operationDTO.getType().equals(OperationType.GET)){
                 EixampleDbEntry entry = map.get(operationDTO.getParameters());
 
-                informe += "GET, KEY:"+operationDTO.getKey()+", VALUE: "+entry.getValue()+"\n";
+                report += "GET, KEY:"+operationDTO.getKey()+", VALUE: "+entry.getValue()+"\n";
 
-            }else if(operationDTO.getTipo().equals(TipoOperacion.DELETE)){
+            }else if(operationDTO.getType().equals(OperationType.DELETE)){
 
                 EixampleDbEntry entry = map.remove(operationDTO.getKey());
                 if(entry != null){
-                    informe += "DELETE, KEY:"+operationDTO.getKey()+", VALUE: OK\n";
+                    report += "DELETE, KEY:"+operationDTO.getKey()+", VALUE: OK\n";
                 }else{
-                    informe += "DELETE, KEY:"+operationDTO.getKey()+", VALUE: FAIL\n";
+                    report += "DELETE, KEY:"+operationDTO.getKey()+", VALUE: FAIL\n";
                 }
 
-            }else if (operationDTO.getTipo().equals(TipoOperacion.SET)){
+            }else if (operationDTO.getType().equals(OperationType.SET)){
 
                 EixampleDbEntry entryToPut = new EixampleDbEntry(operationDTO.getKey(),operationDTO.getParameters(),
                         System.currentTimeMillis(),System.currentTimeMillis()
                         );
                 EixampleDbEntry entry = map.put(operationDTO.getKey(),entryToPut);
                 if(entry != null){
-                    informe += "SET, KEY:"+operationDTO.getKey()+", VALUE: OK, UPDATED\n";
+                    report += "SET, KEY:"+operationDTO.getKey()+", VALUE: OK, UPDATED\n";
                 }else{
-                    informe += "SET, KEY:"+operationDTO.getKey()+", VALUE: OK, NEW\n";
+                    report += "SET, KEY:"+operationDTO.getKey()+", VALUE: OK, NEW\n";
                 }
             }
         }
-        return new BulkResponse(bulkRequest,true,informe);
+        return new BulkResponse(bulkRequest,true,report);
     }
 
 

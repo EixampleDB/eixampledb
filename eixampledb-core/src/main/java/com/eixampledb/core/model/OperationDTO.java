@@ -1,6 +1,6 @@
 package com.eixampledb.core.model;
 
-import com.eixampledb.core.enums.TipoOperacion;
+import com.eixampledb.core.enums.OperationType;
 import lombok.*;
 
 @Getter
@@ -12,7 +12,7 @@ public class OperationDTO {
 
     private String key;
 
-    private TipoOperacion tipo;
+    private OperationType type;
 
     private String parameters;
 }

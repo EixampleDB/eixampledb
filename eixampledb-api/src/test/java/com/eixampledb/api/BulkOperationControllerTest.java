@@ -1,7 +1,7 @@
 package com.eixampledb.api;
 
 import com.eixampledb.core.api.request.BulkRequest;
-import com.eixampledb.core.enums.TipoOperacion;
+import com.eixampledb.core.enums.OperationType;
 import com.eixampledb.core.model.OperationDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class BulkOperationControllerTest {
         List<OperationDTO> operationDTOList = Arrays.asList(
                 OperationDTO.builder()
                         .key("KEY1")
-                        .tipo(TipoOperacion.SET)
+                        .type(OperationType.SET)
                         .parameters("VALUE!!!")
                         .build()
         );
@@ -61,8 +61,8 @@ public class BulkOperationControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String informe = mvcGetResult.getResponse().getContentAsString();
-        assertThat(informe,equalTo("SET, KEY:KEY1, VALUE: OK, NEW\n"));
+        String report = mvcGetResult.getResponse().getContentAsString();
+        assertThat(report,equalTo("SET, KEY:KEY1, VALUE: OK, NEW\n"));
         return;
     }
 
