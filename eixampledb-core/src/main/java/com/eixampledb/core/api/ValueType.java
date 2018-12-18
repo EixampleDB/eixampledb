@@ -11,3 +11,4 @@ public enum ValueType {
         return NUM.equals(this);
     }
 }
+

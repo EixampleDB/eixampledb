@@ -21,14 +21,29 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
 
     @Override
     public SetResponse set(SetRequest setRequest) {
-        Object value = setRequest.getType().isNumber() ? NumberUtils.parse(setRequest.getValue()) : setRequest.getValue();
-        EixampleDbEntry newEntry = map.compute(setRequest.getKey(), (key, entry) -> new EixampleDbEntry(
+    Object value = setRequest.getType().isNumber() ? NumberUtils.parse(setRequest.getValue()) : setRequest.getValue();
+    Object searchType = 0;
+    if(setRequest.getSearch().isStarts()) searchType = 1;
+    else if (setRequest.getSearch().isRegex()) searchType = 2;
+    switch(searchType){
+        case 1:
+            //TODO Crear arbol para busqueda prefijos
+            //BUSQUEDA KEYS -> OPERAR LAS KEYS
+            break;
+
+        case 2:
+            //TODO Busqueda Regular expression en BD
+            //BUSQUEDA KEYS -> OPERAR LAS KEYS
+            break;
+        default:  EixampleDbEntry newEntry = map.compute(setRequest.getKey(), (key, entry) -> new EixampleDbEntry(
                 setRequest.getKey(),
                 value,
                 creationTimestamp(entry),
                 System.currentTimeMillis(),
                 setRequest.getType()
         ));
+    }
+
         return new SetResponse(setRequest, true, newEntry);
     }
 

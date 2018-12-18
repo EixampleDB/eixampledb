@@ -36,15 +36,15 @@ public class MainController {
     public ResponseEntity set(@PathVariable("key") String key,
                               @RequestBody String value,
                               @RequestHeader(name = "type", defaultValue = "STR", required = false) ValueType valueType,
-                              @RequestHeader Map<String,String> header) {
-
+                              @RequestHeader (name = "search", defaultValue = 0, required = false) ValueType searchType ) {
+            /*
             String search = header.get("search");
             int searchType = 0;
             if (search == null) search = "";
             if (search.equals("STARTS")) searchType = 1;
             else if (search.equals("REGEX")) searchType = 2;
             //TODO Send request if searchtype 1 to tree database??
-
+            */
         eixampledb.set(new SetRequest(key, value, valueType, searchType));
         return ResponseEntity.ok().build();
     }

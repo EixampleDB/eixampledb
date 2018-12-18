@@ -11,6 +11,6 @@ public class SetRequest extends Request implements RequestWithKey {
     private final String key;
     private final String value;
     private final ValueType type;
-    private final Integer searchType;
+    private final ValueType searchType;
 
 }
