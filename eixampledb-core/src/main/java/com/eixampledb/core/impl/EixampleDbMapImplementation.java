@@ -2,9 +2,11 @@ package com.eixampledb.core.impl;
 
 import com.eixampledb.core.api.EixampleDbBackend;
 import com.eixampledb.core.api.EixampleDbEntry;
+import com.eixampledb.core.api.KeyTree;
 import com.eixampledb.core.api.request.*;
 import com.eixampledb.core.api.response.*;
 
+import java.util.NavigableSet;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -12,6 +14,7 @@ import java.util.concurrent.ConcurrentMap;
 public class EixampleDbMapImplementation implements EixampleDbBackend {
 
     private final ConcurrentMap<String, EixampleDbEntry> map = new ConcurrentHashMap<>();
+    private final KeyTree treeMapKeys = new KeyTree();
 
     @Override
     public GetResponse get(GetRequest getRequest) {
@@ -21,30 +24,34 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
 
     @Override
     public SetResponse set(SetRequest setRequest) {
-    Object value = setRequest.getType().isNumber() ? NumberUtils.parse(setRequest.getValue()) : setRequest.getValue();
-    int searchType = 0;
-    if(setRequest.getSearchType().isStarts()) searchType = 1;
-    else if (setRequest.getSearchType().isRegex()) searchType = 2;
-    EixampleDbEntry newEntry = null;
-    switch(searchType){
-        case 1:
-            //TODO Crear arbol para busqueda prefijos
-            //BUSQUEDA KEYS -> OPERAR LAS KEYS
-            break;
+        Object value = setRequest.getType().isNumber() ? NumberUtils.parse(setRequest.getValue()) : setRequest.getValue();
+        int searchType = 0;
+        if(setRequest.getSearchType().isStarts()) searchType = 1;
+        else if (setRequest.getSearchType().isRegex()) searchType = 2;
 
-        case 2:
-            //TODO Busqueda Regular expression en BD
-            //BUSQUEDA KEYS -> OPERAR LAS KEYS
-            break;
-        default: newEntry  = map.compute(setRequest.getKey(), (key, entry) -> new EixampleDbEntry(
-                setRequest.getKey(),
-                value,
-                creationTimestamp(entry),
-                System.currentTimeMillis(),
-                setRequest.getType()
-        ));
-    }
+        EixampleDbEntry newEntry = null;
+        switch(searchType){
+            case 1:
+                //TODO Make the set with the given values
+                // need to iterate over the set to get the values
+                NavigableSet<String> setKeys = treeMapKeys.withPrefix(setRequest.getKey());
+                break;
 
+            case 2:
+                //TODO Busqueda Regular expression en BD
+                //BUSQUEDA KEYS -> OPERAR LAS KEYS
+                break;
+            default:
+                newEntry  = map.compute(setRequest.getKey(), (key, entry) -> new EixampleDbEntry(
+                    setRequest.getKey(),
+                    value,
+                    creationTimestamp(entry),
+                    System.currentTimeMillis(),
+                    setRequest.getType()
+                ));
+        }
+
+        treeMapKeys.add(setRequest.getKey());
         return new SetResponse(setRequest, true, newEntry);
     }
 
