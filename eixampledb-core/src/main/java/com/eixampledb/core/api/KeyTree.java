@@ -50,4 +50,8 @@ public class KeyTree {
             return keys.subSet(prefixS,true,prefixE,false);
         }
     }
+
+    public NavigableSet<String> sortedList(){
+        return this.keys;
+    }
 }

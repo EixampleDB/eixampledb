@@ -6,10 +6,14 @@ import com.eixampledb.core.api.KeyTree;
 import com.eixampledb.core.api.request.*;
 import com.eixampledb.core.api.response.*;
 
+import java.util.ArrayList;
 import java.util.NavigableSet;
 import java.util.Optional;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class EixampleDbMapImplementation implements EixampleDbBackend {
 
@@ -30,16 +34,28 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
         else if (setRequest.getSearchType().isRegex()) searchType = 2;
 
         EixampleDbEntry newEntry = null;
+        NavigableSet<String> setKeys;
         switch(searchType){
             case 1:
                 //TODO Make the set with the given values
                 // need to iterate over the set to get the values
-                NavigableSet<String> setKeys = treeMapKeys.withPrefix(setRequest.getKey());
+
+                // this navigabeSet is an iterable with the keys with the given prefix ( setRequest.getKey() )
+                setKeys = treeMapKeys.withPrefix(setRequest.getKey());
                 break;
 
             case 2:
                 //TODO Busqueda Regular expression en BD
                 //BUSQUEDA KEYS -> OPERAR LAS KEYS
+                Pattern pat = Pattern.compile(""); // replace the quotes with the pattern given by the user
+                setKeys = new TreeSet<>();
+                for(String s : treeMapKeys.sortedList()){
+                    Matcher m = pat.matcher(s);
+                    if(m.matches()){
+                        setKeys.add(s);
+                    }
+                }
+                // here we have all the entries that matched our pattern inside "setKeys", which is an iterable
                 break;
             default:
                 newEntry  = map.compute(setRequest.getKey(), (key, entry) -> new EixampleDbEntry(
