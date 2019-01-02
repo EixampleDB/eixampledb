@@ -53,4 +53,16 @@ public class EixampleDbRunnerService implements EixampleDb {
         return response;
     }
 
+    @Override
+    public BulkResponse bulkOperation(BulkRequest bulkRequest) {
+        for (Middleware middleware : middlewares) {
+            middleware.beforeDelete(bulkRequest);
+        }
+        BulkResponse bulkResponse = backend.bulkOperation(bulkRequest);
+        for (Middleware middleware : middlewares) {
+            middleware.afterDelete(bulkResponse);
+        }
+        return bulkResponse;
+    }
+
 }
