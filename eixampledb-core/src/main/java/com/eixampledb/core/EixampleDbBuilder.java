@@ -20,7 +20,18 @@ public class EixampleDbBuilder {
     }
 
     public EixampleDbBuilder withMapBackend() {
-        return withBacked(new EixampleDbMapImplementation());
+        EixampleDbMapImplementation e = new EixampleDbMapImplementation();
+        // Loading snapshot
+        try {
+            e.loadSnapshot("log.json");
+        } catch(Exception e1) {
+            System.out.println("Snapshot not found");
+        }
+        // Thread starts for snapshot creation
+        new Thread(() -> {
+            e.doSnapshot();
+        }).start();
+        return withBacked(e);
     }
 
     public EixampleDbBuilder withMiddlewares(Middleware ... newMiddlewares) {
