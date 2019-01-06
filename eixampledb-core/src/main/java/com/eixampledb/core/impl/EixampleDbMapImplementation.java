@@ -1,5 +1,6 @@
 package com.eixampledb.core.impl;
 
+import com.eixampledb.core.Snapshot;
 import com.eixampledb.core.api.EixampleDbBackend;
 import com.eixampledb.core.api.EixampleDbEntry;
 import com.eixampledb.core.api.ValueType;
@@ -8,6 +9,8 @@ import com.eixampledb.core.api.response.*;
 import com.eixampledb.core.enums.OperationType;
 import com.eixampledb.core.model.OperationDTO;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -17,6 +20,22 @@ import java.util.concurrent.ConcurrentMap;
 public class EixampleDbMapImplementation implements EixampleDbBackend {
 
     private final ConcurrentMap<String, EixampleDbEntry> map = new ConcurrentHashMap<>();
+    // For now files are saved to "log.json"
+    String now = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+    private final Snapshot snapshot = new Snapshot("log" + ".json", map);
+
+    // Create snapshot
+    public void doSnapshot() {
+        snapshot.run();
+    }
+
+    /**
+     * Load snapshot
+     * @param filename path to the snapshot file
+     */
+    public void loadSnapshot(String filename) {
+        snapshot.lock_and_read(filename, this.map);
+    }
 
     @Override
     public GetResponse get(GetRequest getRequest) {
