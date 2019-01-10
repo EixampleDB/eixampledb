@@ -1,5 +1,6 @@
 package com.eixampledb.core.api.request;
 
+import com.eixampledb.core.api.SearchType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -8,5 +9,7 @@ import lombok.RequiredArgsConstructor;
 public class GetRequest extends Request implements RequestWithKey {
 
     private final String key;
+
+    private final SearchType searchType;
 
 }

@@ -9,10 +9,8 @@ import com.eixampledb.core.api.response.*;
 import com.eixampledb.core.enums.OperationType;
 import com.eixampledb.core.model.OperationDTO;
 
-import java.util.NavigableSet;
-import java.util.Optional;
-import java.util.TreeSet;
-import java.util.List;
+import java.lang.reflect.Array;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Matcher;
@@ -25,8 +23,46 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
 
     @Override
     public GetResponse get(GetRequest getRequest) {
-        Optional<EixampleDbEntry> eixampledbEntry = Optional.ofNullable(map.get(getRequest.getKey()));
-        return new GetResponse(getRequest, eixampledbEntry.isPresent(), eixampledbEntry);
+        int searchType = 0;
+        if(getRequest.getSearchType().isStarts()) searchType = 1;
+        else if (getRequest.getSearchType().isRegex()) searchType = 2;
+
+        EixampleDbEntry newEntry = null;
+        NavigableSet<String> setKeys;
+        switch(searchType){
+            case 1:
+                // this navigabeSet is an iterable with the keys with the given prefix ( setRequest.getKey() )
+                setKeys = treeMapKeys.withPrefix(getRequest.getKey());
+                for(String llave: setKeys){
+                    EixampleDbEntry entry = map.get(llave);
+
+                }
+
+                break;
+
+            case 2:
+                //TODO Busqueda Regular expression en BD
+                //BUSQUEDA KEYS -> OPERAR LAS KEYS
+                Pattern pat = Pattern.compile(getRequest.getKey()); // replace the quotes with the pattern given by the user
+                setKeys = new TreeSet<>();
+                for(String s : treeMapKeys.sortedList()){
+                    Matcher m = pat.matcher(s);
+                    if(m.matches()){
+                        setKeys.add(s);
+                    }
+                }
+                for(String llave: setKeys) {
+                    EixampleDbEntry entry = map.get(llave);
+                }
+
+                // here we have all the entries that matched our pattern inside "setKeys", which is an iterable
+                break;
+            default:
+                Optional<EixampleDbEntry> eixampledbEntry = Optional.ofNullable(map.get(getRequest.getKey()));
+                return new GetResponse(getRequest, eixampledbEntry.isPresent(), eixampledbEntry);
+        }
+
+        return new BulkResponse(BulkRequest.builder().operatioons(operations),true,report);
     }
 
     @Override
@@ -45,6 +81,15 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
 
                 // this navigabeSet is an iterable with the keys with the given prefix ( setRequest.getKey() )
                 setKeys = treeMapKeys.withPrefix(setRequest.getKey());
+                for(String llave: setKeys){
+                    newEntry  = map.compute(llave, (key, entry) -> new EixampleDbEntry(
+                            llave,
+                            value,
+                            creationTimestamp(entry),
+                            System.currentTimeMillis(),
+                            setRequest.getType()
+                    ));
+                }
                 break;
 
             case 2:
@@ -58,6 +103,16 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
                         setKeys.add(s);
                     }
                 }
+                for(String llave: setKeys) {
+                    newEntry = map.compute(llave, (key, entry) -> new EixampleDbEntry(
+                            llave,
+                            value,
+                            creationTimestamp(entry),
+                            System.currentTimeMillis(),
+                            setRequest.getType()
+                    ));
+                }
+
                 // here we have all the entries that matched our pattern inside "setKeys", which is an iterable
                 break;
             default:
@@ -68,9 +123,10 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
                     System.currentTimeMillis(),
                     setRequest.getType()
                 ));
+                treeMapKeys.add(setRequest.getKey());
         }
 
-        treeMapKeys.add(setRequest.getKey());
+
         return new SetResponse(setRequest, true, newEntry);
     }
 
