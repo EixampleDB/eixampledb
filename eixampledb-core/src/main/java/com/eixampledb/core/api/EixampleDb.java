@@ -1,5 +1,4 @@
 package com.eixampledb.core.api;
-
 import com.eixampledb.core.api.request.*;
 import com.eixampledb.core.api.response.*;
 
@@ -14,5 +13,7 @@ public interface EixampleDb {
     DecrResponse decr(DecrRequest decrRequest);
 
     DeleteResponse delete(DeleteRequest deleteRequest);
+
+    BulkResponse bulkOperation(BulkRequest bulkRequest);
 
 }

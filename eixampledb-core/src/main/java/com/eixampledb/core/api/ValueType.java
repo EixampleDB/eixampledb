@@ -10,5 +10,7 @@ public enum ValueType {
     public boolean isNumber() {
         return NUM.equals(this);
     }
+
+
 }
 

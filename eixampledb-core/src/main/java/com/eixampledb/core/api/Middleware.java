@@ -1,5 +1,6 @@
 package com.eixampledb.core.api;
 
+
 import com.eixampledb.core.api.request.*;
 import com.eixampledb.core.api.response.*;
 
@@ -14,10 +15,14 @@ public interface Middleware {
     void beforeDelete(DeleteRequest deleteRequest);
     void afterDelete(DeleteResponse deleteResponse);
 
+    void beforeDelete(BulkRequest bulkRequest);
+    void afterDelete(BulkResponse bulkResponse);
+
     void beforeIncr(IncrRequest request);
     void afterIncr(IncrResponse response);
 
     void beforeDecr(DecrRequest request);
     void afterDecr(DecrResponse response);
     
+
 }
