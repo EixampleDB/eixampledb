@@ -55,7 +55,7 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
                 break;
 
             case 2:
-                //TODO Busqueda Regular expression en BD
+
                 //BUSQUEDA KEYS -> OPERAR LAS KEYS
                 Pattern pat = Pattern.compile(setRequest.getKey()); // replace the quotes with the pattern given by the user
                 setKeys = new TreeSet<>();
@@ -94,12 +94,58 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
 
     @Override
     public IncrResponse incr(IncrRequest request) {
-        EixampleDbEntry newEntry = map.computeIfPresent(request.getKey(), (key, entry) -> new EixampleDbEntry(
-                request.getKey(),
-                NumberUtils.incr(entry.getValue()),
-                creationTimestamp(entry),
-                System.currentTimeMillis(),
-                entry.getType()));
+        int searchType = 0;
+        if(request.getSearchType().isStarts()) searchType = 1;
+        else if (request.getSearchType().isRegex()) searchType = 2;
+
+        EixampleDbEntry newEntry = null;
+        NavigableSet<String> incrKeys;
+        switch(searchType){
+            case 1:
+
+                // this navigabeSet is an iterable with the keys with the given prefix ( setRequest.getKey() )
+                incrKeys = treeMapKeys.withPrefix(request.getKey());
+                for(String llave: incrKeys){
+                    newEntry = map.computeIfPresent(llave, (key, entry) -> new EixampleDbEntry(
+                            llave,
+                            NumberUtils.incr(entry.getValue()),
+                            creationTimestamp(entry),
+                            System.currentTimeMillis(),
+                            entry.getType()));
+                }
+                break;
+
+            case 2:
+                //TODO Busqueda Regular expression en BD
+                //BUSQUEDA KEYS -> OPERAR LAS KEYS
+                Pattern pat = Pattern.compile(request.getKey()); // replace the quotes with the pattern given by the user
+                incrKeys = new TreeSet<>();
+                for(String s : treeMapKeys.sortedList()){
+                    Matcher m = pat.matcher(s);
+                    if(m.matches()){
+                        incrKeys.add(s);
+                    }
+                }
+                for(String llave: incrKeys) {
+                    newEntry = map.computeIfPresent(llave, (key, entry) -> new EixampleDbEntry(
+                            llave,
+                            NumberUtils.incr(entry.getValue()),
+                            creationTimestamp(entry),
+                            System.currentTimeMillis(),
+                            entry.getType()));
+                }
+
+                // here we have all the entries that matched our pattern inside "setKeys", which is an iterable
+                break;
+            default:
+                newEntry = map.computeIfPresent(request.getKey(), (key, entry) -> new EixampleDbEntry(
+                        request.getKey(),
+                        NumberUtils.incr(entry.getValue()),
+                        creationTimestamp(entry),
+                        System.currentTimeMillis(),
+                        entry.getType()));
+        }
+
         if (newEntry != null) {
             return new IncrResponse(request, true, Optional.of(newEntry));
         } else {
@@ -109,12 +155,58 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
 
     @Override
     public DecrResponse decr(DecrRequest request) {
-        EixampleDbEntry newEntry = map.computeIfPresent(request.getKey(), (key, entry) -> new EixampleDbEntry(
-                request.getKey(),
-                NumberUtils.decr(entry.getValue()),
-                creationTimestamp(entry),
-                System.currentTimeMillis(),
-                entry.getType()));
+        int searchType = 0;
+        if(request.getSearchType().isStarts()) searchType = 1;
+        else if (request.getSearchType().isRegex()) searchType = 2;
+
+        EixampleDbEntry newEntry = null;
+        NavigableSet<String> incrKeys;
+        switch(searchType){
+            case 1:
+
+                // this navigabeSet is an iterable with the keys with the given prefix ( setRequest.getKey() )
+                incrKeys = treeMapKeys.withPrefix(request.getKey());
+                for(String llave: incrKeys){
+                    newEntry = map.computeIfPresent(llave, (key, entry) -> new EixampleDbEntry(
+                            llave,
+                            NumberUtils.decr(entry.getValue()),
+                            creationTimestamp(entry),
+                            System.currentTimeMillis(),
+                            entry.getType()));
+                }
+                break;
+
+            case 2:
+                //TODO Busqueda Regular expression en BD
+                //BUSQUEDA KEYS -> OPERAR LAS KEYS
+                Pattern pat = Pattern.compile(request.getKey()); // replace the quotes with the pattern given by the user
+                incrKeys = new TreeSet<>();
+                for(String s : treeMapKeys.sortedList()){
+                    Matcher m = pat.matcher(s);
+                    if(m.matches()){
+                        incrKeys.add(s);
+                    }
+                }
+                for(String llave: incrKeys) {
+                    newEntry = map.computeIfPresent(llave, (key, entry) -> new EixampleDbEntry(
+                            llave,
+                            NumberUtils.decr(entry.getValue()),
+                            creationTimestamp(entry),
+                            System.currentTimeMillis(),
+                            entry.getType()));
+                }
+
+                // here we have all the entries that matched our pattern inside "setKeys", which is an iterable
+                break;
+            default:
+                newEntry = map.computeIfPresent(request.getKey(), (key, entry) -> new EixampleDbEntry(
+                        request.getKey(),
+                        NumberUtils.decr(entry.getValue()),
+                        creationTimestamp(entry),
+                        System.currentTimeMillis(),
+                        entry.getType()));
+        }
+
         if (newEntry != null) {
             return new DecrResponse(request, true, Optional.of(newEntry));
         } else {
@@ -124,7 +216,6 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
 
     @Override
     public DeleteResponse delete(DeleteRequest deleteRequest) {
-                //Object value = deleteRequest.getType().isNumber() ? NumberUtils.parse(deleteRequest.getValue()) : deleteRequest.getValue();
                 int searchType = 0;
                 if(deleteRequest.getSearchType().isStarts()) searchType = 1;
                 else if (deleteRequest.getSearchType().isRegex()) searchType = 2;
@@ -133,8 +224,7 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
                 NavigableSet<String> deleteKeys;
                 switch(searchType){
                     case 1:
-                //TODO Make the set with the given values
-                // need to iterate over the set to get the values
+
 
                 // this navigabeSet is an iterable with the keys with the given prefix ( setRequest.getKey() )
                 deleteKeys = treeMapKeys.withPrefix(deleteRequest.getKey());
