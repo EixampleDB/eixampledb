@@ -155,4 +155,57 @@ public class MainControllerTest {
                 .andExpect(content().string("I'm a word"));
     }
 
+    @Test
+    public void shouldFoundAndOverwriteMatchesPrep() throws Exception {
+
+        mockMvc.perform(post("/actualkey09").content("pretestvalue1"))
+                .andExpect(status().isOk());
+        mockMvc.perform(get("/actualkey09"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("pretestvalue1"));
+
+        mockMvc.perform(post("/actualkey010").content("pretestvalue2"))
+                .andExpect(status().isOk());
+        mockMvc.perform(get("/actualkey010"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("pretestvalue2"));
+
+        mockMvc.perform(post("/actualkey0").content("newValue").header("search","STARTS"))
+                .andExpect(status().isOk());
+
+
+        mockMvc.perform(get("/actualkey09"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("newValue"));
+        mockMvc.perform(get("/actualkey010"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("newValue"));
+    }
+
+    @Test
+    public void shouldFoundAndOverwriteMatchesRegEx() throws Exception {
+        mockMvc.perform(post("/actualregexkey11").content("pretestvalue1"))
+                .andExpect(status().isOk());
+        mockMvc.perform(get("/actualregexkey11"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("pretestvalue1"));
+
+        mockMvc.perform(post("/actualregexkey12").content("pretestvalue2"))
+                .andExpect(status().isOk());
+        mockMvc.perform(get("/actualregexkey12"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("pretestvalue2"));
+
+        mockMvc.perform(post("/.*regex.*").content("newValue").header("search","REGEX"))
+                .andExpect(status().isOk());
+
+
+        mockMvc.perform(get("/actualregexkey11"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("newValue"));
+        mockMvc.perform(get("/actualregexkey12"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("newValue"));
+    }
+
 }
