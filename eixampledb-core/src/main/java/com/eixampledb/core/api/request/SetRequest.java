@@ -16,5 +16,12 @@ public class SetRequest extends Request implements RequestWithKey {
     private final ValueType type;
     private final SearchType searchType;
 
+    public SetRequest(String dKey, String value, ValueType type){
+        this.key = dKey;
+        this.value = value;
+        this.type = type;
+        this.searchType = SearchType.DEF;
+    }
+
 
 }

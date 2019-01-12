@@ -20,8 +20,8 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
 
     @Override
     public GetResponse get(GetRequest getRequest) {
-            Optional<EixampleDbEntry> eixampledbEntry = Optional.ofNullable(map.get(getRequest.getKey()));
-            return new GetResponse(getRequest, eixampledbEntry.isPresent(), eixampledbEntry);
+        Optional<EixampleDbEntry> eixampledbEntry = Optional.ofNullable(map.get(getRequest.getKey()));
+        return new GetResponse(getRequest, eixampledbEntry.isPresent(), eixampledbEntry);
     }
 
     @Override
@@ -76,13 +76,14 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
                 break;
             default:
                 newEntry  = map.compute(setRequest.getKey(), (key, entry) -> new EixampleDbEntry(
-                    setRequest.getKey(),
-                    value,
-                    creationTimestamp(entry),
-                    System.currentTimeMillis(),
-                    setRequest.getType()
+                        setRequest.getKey(),
+                        value,
+                        creationTimestamp(entry),
+                        System.currentTimeMillis(),
+                        setRequest.getType()
                 ));
                 treeMapKeys.add(setRequest.getKey());
+                break;
         }
 
 
@@ -107,7 +108,7 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
                 incrKeys = treeMapKeys.withPrefix(request.getKey());
                 for(String llave: incrKeys){
                     newEntry = map.computeIfPresent(llave, (key, entry) -> new EixampleDbEntry(
-                            llave,
+                            request.getKey(),
                             NumberUtils.incr(entry.getValue()),
                             creationTimestamp(entry),
                             System.currentTimeMillis(),
@@ -128,7 +129,7 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
                 }
                 for(String llave: incrKeys) {
                     newEntry = map.computeIfPresent(llave, (key, entry) -> new EixampleDbEntry(
-                            llave,
+                            request.getKey(),
                             NumberUtils.incr(entry.getValue()),
                             creationTimestamp(entry),
                             System.currentTimeMillis(),
@@ -217,8 +218,11 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
     @Override
     public DeleteResponse delete(DeleteRequest deleteRequest) {
         int searchType = 0;
-        if(deleteRequest.getSearchType().isStarts()) searchType = 1;
-        else if (deleteRequest.getSearchType().isRegex()) searchType = 2;
+        if(deleteRequest.getSearchType().isStarts()) {
+            searchType = 1;
+        } else if (deleteRequest.getSearchType().isRegex()) {
+            searchType = 2;
+        }
 
         Optional<EixampleDbEntry> entry = null;
         NavigableSet<String> deleteKeys;
@@ -251,9 +255,6 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
             default:
                  entry =  Optional.ofNullable(map.remove(deleteRequest.getKey()));
         }
-
-
-
         return new DeleteResponse(deleteRequest, entry.isPresent(), entry);
 
     }
@@ -283,7 +284,7 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
 
                 EixampleDbEntry entryToPut = new EixampleDbEntry(operationDTO.getKey(),operationDTO.getValue(),
                         System.currentTimeMillis(),System.currentTimeMillis(),valueType
-                        );
+                );
 
                 SetRequest setRequest = SetRequest.builder()
                         .key(operationDTO.getKey())

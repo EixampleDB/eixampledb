@@ -9,7 +9,10 @@ import lombok.RequiredArgsConstructor;
 public class DeleteRequest extends Request implements RequestWithKey {
 
     private final String key;
-
-
     private final SearchType searchType;
+
+    public DeleteRequest(String dKey){
+        this.key = dKey;
+        this.searchType = SearchType.DEF;
+    }
 }
