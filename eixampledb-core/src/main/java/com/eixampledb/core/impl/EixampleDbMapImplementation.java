@@ -124,6 +124,66 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
 
     @Override
     public DeleteResponse delete(DeleteRequest deleteRequest) {
+        Object value = deleteRequest.getType().isNumber() ? NumberUtils.parse(deleteRequest.getValue()) : deleteRequest.getValue();
+        int searchType = 0;
+        if(deleteRequest.getSearchType().isStarts()) searchType = 1;
+        else if (deleteRequest.getSearchType().isRegex()) searchType = 2;
+
+        EixampleDbEntry newEntry = null;
+        NavigableSet<String> setKeys;
+        switch(searchType){
+            case 1:
+                //TODO Make the set with the given values
+                // need to iterate over the set to get the values
+
+                // this navigabeSet is an iterable with the keys with the given prefix ( setRequest.getKey() )
+                setKeys = treeMapKeys.withPrefix(deleteRequest.getKey());
+                for(String llave: setKeys){
+                    newEntry  = map.compute(llave, (key, entry) -> new EixampleDbEntry(
+                            llave,
+                            value,
+                            creationTimestamp(entry),
+                            System.currentTimeMillis(),
+                            deleteRequest.getType()
+                    ));
+                }
+                break;
+
+            case 2:
+                //TODO Busqueda Regular expression en BD
+                //BUSQUEDA KEYS -> OPERAR LAS KEYS
+                Pattern pat = Pattern.compile(deleteRequest.getKey()); // replace the quotes with the pattern given by the user
+                setKeys = new TreeSet<>();
+                for(String s : treeMapKeys.sortedList()){
+                    Matcher m = pat.matcher(s);
+                    if(m.matches()){
+                        setKeys.add(s);
+                    }
+                }
+                for(String llave: setKeys) {
+                    newEntry = map.compute(llave, (key, entry) -> new EixampleDbEntry(
+                            llave,
+                            value,
+                            creationTimestamp(entry),
+                            System.currentTimeMillis(),
+                            deleteRequest.getType()
+                    ));
+                }
+
+                // here we have all the entries that matched our pattern inside "setKeys", which is an iterable
+                break;
+            default:
+                newEntry  = map.compute(deleteRequest.getKey(), (key, entry) -> new EixampleDbEntry(
+                        deleteRequest.getKey(),
+                        value,
+                        creationTimestamp(entry),
+                        System.currentTimeMillis(),
+                        deleteRequest.getType()
+                ));
+                treeMapKeys.add(deleteRequest.getKey());
+        }
+
+        
         Optional<EixampleDbEntry> entry =  Optional.ofNullable(map.remove(deleteRequest.getKey()));
         return new DeleteResponse(deleteRequest, entry.isPresent(), entry);
 
