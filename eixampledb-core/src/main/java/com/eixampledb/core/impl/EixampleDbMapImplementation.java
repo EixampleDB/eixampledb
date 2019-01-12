@@ -139,7 +139,7 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
                 // this navigabeSet is an iterable with the keys with the given prefix ( setRequest.getKey() )
                 deleteKeys = treeMapKeys.withPrefix(deleteRequest.getKey());
                 for(String llave: deleteKeys){
-                    Optional.ofNullable(map.remove(llave));
+                    entry = Optional.ofNullable(map.remove(llave));
                 }
                 break;
 
@@ -155,7 +155,7 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
                     }
                 }
                 for(String llave: deleteKeys) {
-                    Optional.ofNullable(map.remove(llave));
+                    entry = Optional.ofNullable(map.remove(llave));
                 }
 
                 // here we have all the entries that matched our pattern inside "setKeys", which is an iterable
