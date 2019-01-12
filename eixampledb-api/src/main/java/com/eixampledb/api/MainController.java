@@ -44,7 +44,7 @@ public class MainController {
             if (search == null) search = "";
             if (search.equals("STARTS")) searchType = 1;
             else if (search.equals("REGEX")) searchType = 2;
-            //TODO Send request if searchtype 1 to tree database??
+
             */
         eixampledb.set(new SetRequest(key, value, valueType, searchType));
         return ResponseEntity.ok().build();
@@ -69,8 +69,9 @@ public class MainController {
     }
 
     @RequestMapping(path = "/{key}", method = RequestMethod.DELETE)
-    public ResponseEntity delete(@PathVariable("key") String key) {
-        DeleteResponse deleteResponse = eixampledb.delete(new DeleteRequest(key));
+    public ResponseEntity delete(@PathVariable("key") String key,
+                                 @RequestHeader (name = "search", defaultValue = "DEF", required = false) SearchType searchType ) {
+        DeleteResponse deleteResponse = eixampledb.delete(new DeleteRequest(key, searchType));
         if (deleteResponse.isSuccess()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {

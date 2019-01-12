@@ -10,6 +10,6 @@ public class GetRequest extends Request implements RequestWithKey {
 
     private final String key;
 
-    private final SearchType searchType;
+    //private final SearchType searchType;
 
 }

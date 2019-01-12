@@ -124,15 +124,15 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
 
     @Override
     public DeleteResponse delete(DeleteRequest deleteRequest) {
-        //Object value = deleteRequest.getType().isNumber() ? NumberUtils.parse(deleteRequest.getValue()) : deleteRequest.getValue();
-        int searchType = 0;
-        if(deleteRequest.getSearchType().isStarts()) searchType = 1;
-        else if (deleteRequest.getSearchType().isRegex()) searchType = 2;
+                //Object value = deleteRequest.getType().isNumber() ? NumberUtils.parse(deleteRequest.getValue()) : deleteRequest.getValue();
+                int searchType = 0;
+                if(deleteRequest.getSearchType().isStarts()) searchType = 1;
+                else if (deleteRequest.getSearchType().isRegex()) searchType = 2;
 
-        Optional<EixampleDbEntry> entry = null;
-        NavigableSet<String> deleteKeys;
-        switch(searchType){
-            case 1:
+                Optional<EixampleDbEntry> entry = null;
+                NavigableSet<String> deleteKeys;
+                switch(searchType){
+                    case 1:
                 //TODO Make the set with the given values
                 // need to iterate over the set to get the values
 
@@ -161,7 +161,7 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
                 // here we have all the entries that matched our pattern inside "setKeys", which is an iterable
                 break;
             default:
-                treeMapKeys.add(deleteRequest.getKey());
+                 entry =  Optional.ofNullable(map.remove(deleteRequest.getKey()));
         }
 
 
