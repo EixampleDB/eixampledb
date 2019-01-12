@@ -38,14 +38,7 @@ public class MainController {
                               @RequestBody String value,
                               @RequestHeader(name = "type", defaultValue = "STR", required = false) ValueType valueType,
                               @RequestHeader (name = "search", defaultValue = "DEF", required = false) SearchType searchType ) {
-            /*
-            String search = header.get("search");
-            int searchType = 0;
-            if (search == null) search = "";
-            if (search.equals("STARTS")) searchType = 1;
-            else if (search.equals("REGEX")) searchType = 2;
 
-            */
         eixampledb.set(new SetRequest(key, value, valueType, searchType));
         return ResponseEntity.ok().build();
     }
