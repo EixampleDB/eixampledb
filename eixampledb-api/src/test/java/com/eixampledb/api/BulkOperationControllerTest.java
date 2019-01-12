@@ -63,6 +63,7 @@ public class BulkOperationControllerTest {
 
         String idOperation = mvcResult.getResponse().getContentAsString();
 
+
         MvcResult mvcGetResult = mockMvc.perform(get("/bulk/"+idOperation))
                 .andExpect(status().isOk())
                 .andReturn();

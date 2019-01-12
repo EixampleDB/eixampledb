@@ -92,8 +92,11 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
     @Override
     public IncrResponse incr(IncrRequest request) {
         int searchType = 0;
-        if(request.getSearchType().isStarts()) searchType = 1;
-        else if (request.getSearchType().isRegex()) searchType = 2;
+        if(request.getSearchType().isStarts()) {
+            searchType = 1;
+        } else if (request.getSearchType().isRegex()) {
+            searchType = 2;
+        }
 
         EixampleDbEntry newEntry = null;
         NavigableSet<String> incrKeys;
@@ -213,16 +216,14 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
 
     @Override
     public DeleteResponse delete(DeleteRequest deleteRequest) {
-                int searchType = 0;
-                if(deleteRequest.getSearchType().isStarts()) searchType = 1;
-                else if (deleteRequest.getSearchType().isRegex()) searchType = 2;
+        int searchType = 0;
+        if(deleteRequest.getSearchType().isStarts()) searchType = 1;
+        else if (deleteRequest.getSearchType().isRegex()) searchType = 2;
 
-                Optional<EixampleDbEntry> entry = null;
-                NavigableSet<String> deleteKeys;
-                switch(searchType){
-                    case 1:
-
-
+        Optional<EixampleDbEntry> entry = null;
+        NavigableSet<String> deleteKeys;
+        switch(searchType){
+            case 1:
                 // this navigabeSet is an iterable with the keys with the given prefix ( setRequest.getKey() )
                 deleteKeys = treeMapKeys.withPrefix(deleteRequest.getKey());
                 for(String llave: deleteKeys){
@@ -299,7 +300,7 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
 
             }else if(operationDTO.getType().equals(OperationType.INCR)){
 
-                IncrRequest incrRequest = new IncrRequest(operationDTO.getKey(), SearchType.DEF);
+                IncrRequest incrRequest = new IncrRequest(operationDTO.getKey());
                 IncrResponse incrResponse = this.incr(incrRequest);
                 if(incrResponse.getEntry().isPresent()){
                     report += "INCR, KEY:"+operationDTO.getKey()+", VALUE:"+incrResponse.getEntry().get().getValue().toString()+ "\n";
@@ -309,7 +310,7 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
 
             }else if(operationDTO.getType().equals(OperationType.DECR)){
 
-                DecrRequest decrRequest = new DecrRequest(operationDTO.getKey(), SearchType.DEF);
+                DecrRequest decrRequest = new DecrRequest(operationDTO.getKey());
                 DecrResponse decrResponse = this.decr(decrRequest);
                 if(decrResponse.getEntry().isPresent()){
                     report += "DECR, KEY:"+operationDTO.getKey()+", VALUE: "+decrResponse.getEntry().get().getValue().toString()+ "\n";

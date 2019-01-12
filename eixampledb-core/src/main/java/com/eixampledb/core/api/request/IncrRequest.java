@@ -11,4 +11,9 @@ public class IncrRequest extends Request implements RequestWithKey {
     private final String key;
     private final SearchType searchType;
 
+    public IncrRequest(String iKey){
+        this.key = iKey;
+        this.searchType = SearchType.DEF;
+    }
+
 }

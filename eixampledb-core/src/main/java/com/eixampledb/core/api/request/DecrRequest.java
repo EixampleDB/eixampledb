@@ -11,4 +11,9 @@ public class DecrRequest extends Request implements RequestWithKey {
     private final String key;
     private final SearchType searchType;
 
+    public DecrRequest(String dKey){
+        this.key = dKey;
+        this.searchType = SearchType.DEF;
+    }
+
 }
