@@ -52,12 +52,13 @@ public class MainController {
 
     @RequestMapping(path = "/{key}", method = RequestMethod.PUT)
     public ResponseEntity operation(@PathVariable("key") String key,
-                                    @RequestHeader(value = "op") Operation operation) {
+                                    @RequestHeader(value = "op") Operation operation,
+                                    @RequestHeader (name = "search", defaultValue = "DEF", required = false) SearchType searchType ) {
         Response<?> response;
         if (operation.isDecrement()) {
-            response = eixampledb.decr(new DecrRequest(key));
+            response = eixampledb.decr(new DecrRequest(key,searchType));
         } else if (operation.isIncrement()) {
-            response = eixampledb.incr(new IncrRequest(key));
+            response = eixampledb.incr(new IncrRequest(key,searchType));
         } else {
             throw new UnsupportedOperationException("Unsupported operaton " + operation.name());
         }

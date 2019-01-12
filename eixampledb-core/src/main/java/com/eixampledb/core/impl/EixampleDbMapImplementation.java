@@ -1,9 +1,6 @@
 package com.eixampledb.core.impl;
 
-import com.eixampledb.core.api.EixampleDbBackend;
-import com.eixampledb.core.api.EixampleDbEntry;
-import com.eixampledb.core.api.KeyTree;
-import com.eixampledb.core.api.ValueType;
+import com.eixampledb.core.api.*;
 import com.eixampledb.core.api.request.*;
 import com.eixampledb.core.api.response.*;
 import com.eixampledb.core.enums.OperationType;
@@ -302,7 +299,7 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
 
             }else if(operationDTO.getType().equals(OperationType.INCR)){
 
-                IncrRequest incrRequest = new IncrRequest(operationDTO.getKey());
+                IncrRequest incrRequest = new IncrRequest(operationDTO.getKey(), SearchType.DEF);
                 IncrResponse incrResponse = this.incr(incrRequest);
                 if(incrResponse.getEntry().isPresent()){
                     report += "INCR, KEY:"+operationDTO.getKey()+", VALUE:"+incrResponse.getEntry().get().getValue().toString()+ "\n";
@@ -312,7 +309,7 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
 
             }else if(operationDTO.getType().equals(OperationType.DECR)){
 
-                DecrRequest decrRequest = new DecrRequest(operationDTO.getKey());
+                DecrRequest decrRequest = new DecrRequest(operationDTO.getKey(), SearchType.DEF);
                 DecrResponse decrResponse = this.decr(decrRequest);
                 if(decrResponse.getEntry().isPresent()){
                     report += "DECR, KEY:"+operationDTO.getKey()+", VALUE: "+decrResponse.getEntry().get().getValue().toString()+ "\n";
