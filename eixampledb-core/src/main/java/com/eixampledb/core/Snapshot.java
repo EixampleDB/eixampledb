@@ -21,6 +21,7 @@ public class Snapshot implements Runnable {
 
     private String fileName;
     private ConcurrentMap<String, EixampleDbEntry> db;
+    public static boolean isLoadingServiceSnapshots = false;
 
     /**
      *
@@ -148,12 +149,14 @@ public class Snapshot implements Runnable {
     public ConcurrentMap<String, EixampleDbEntry> lock_and_read(String path, ConcurrentMap<String, EixampleDbEntry> db) {
 
         FileReader fr = null;
+        isLoadingServiceSnapshots = true;
 
         // Read file
         try {
             fr = new FileReader((path));
         } catch (FileNotFoundException e) {
             System.out.println("Snapshot not found");
+            isLoadingServiceSnapshots=false;
         }
 
         // Parse the file and obtain fields
@@ -165,6 +168,7 @@ public class Snapshot implements Runnable {
 
         } catch (Exception e) {
             // pass (Snapshot not found)
+            isLoadingServiceSnapshots = false;
         }
 
         EixampleDbEntry entry;
@@ -181,6 +185,8 @@ public class Snapshot implements Runnable {
                     j2.get("type").equals("STR") ? ValueType.STR : ValueType.NUM);
             db.put(k.toString(), entry);
         }
+
+        isLoadingServiceSnapshots = false;
 
         return db;
     }
