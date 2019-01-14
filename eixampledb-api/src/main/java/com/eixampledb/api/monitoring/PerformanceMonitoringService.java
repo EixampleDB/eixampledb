@@ -9,4 +9,6 @@ public interface PerformanceMonitoringService {
 
     public abstract float getHitRate();
     public abstract void addHit(boolean hit);
+
+    public abstract void resetCounters();
 }

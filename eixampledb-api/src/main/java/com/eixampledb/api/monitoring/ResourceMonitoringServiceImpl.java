@@ -37,7 +37,7 @@ public class ResourceMonitoringServiceImpl implements ResourceMonitoringService{
         return (float) free_space / total_space;
     }
 
-    @Scheduled(cron = "*/59 * * * * *")
+    @Scheduled(cron = "0 * * * * *")
     private void storeData(){
         logStorageService.infoMessage("CPU usage: " + getCpuUsage()*100 + "%");
         logStorageService.infoMessage("RAM usage: " + getRamUsage()*100 + "%");

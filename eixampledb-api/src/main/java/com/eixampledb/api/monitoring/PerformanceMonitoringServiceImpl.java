@@ -48,18 +48,22 @@ public class PerformanceMonitoringServiceImpl implements PerformanceMonitoringSe
         setHitRate(newHitRate);
     }
 
-    @Scheduled(cron = "*/59 * * * * *")
-    private void storeData(){
-        logStorageService.infoMessage("Latency: " + Float.toString(maxLastMinuteLatency) + " ms");
-        logStorageService.infoMessage("OPM: " + currentOPM.toString() );
-        logStorageService.infoMessage("Hit Rate: " + Float.toString(currentHitRate*100) + "%");
-
+    @Override
+    public void resetCounters() {
         maxLastMinuteLatency = 0;
         currentOPM.set(0);
         currentHitRate = 0;
         totalReq.set(0);
     }
 
+    @Scheduled(cron = "0 * * * * *")
+    private void storeData(){
+        logStorageService.infoMessage("Latency: " + Float.toString(maxLastMinuteLatency) + " ms");
+        logStorageService.infoMessage("OPM: " + currentOPM.toString() );
+        logStorageService.infoMessage("Hit Rate: " + Float.toString(currentHitRate*100) + "%");
+
+        this.resetCounters();
+    }
 
     private synchronized void setHitRate(float hitRate) {
         currentHitRate = hitRate;
