@@ -290,6 +290,7 @@ public class EixampleDbMapImplementation implements EixampleDbBackend {
                         .key(operationDTO.getKey())
                         .type(valueType)
                         .value(operationDTO.getValue())
+                        .searchType(SearchType.DEF)
                         .build();
                 SetResponse setResponse = this.set(setRequest);
 
