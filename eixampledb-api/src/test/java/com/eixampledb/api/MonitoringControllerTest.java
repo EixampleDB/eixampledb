@@ -84,8 +84,7 @@ public class MonitoringControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("1.0"));
 
-        mockMvc.perform(get("/actualkey2"))
-                .andExpect(status().isNotFound());
+        mockMvc.perform(get("/actualkey2"));
 
         mockMvc.perform(get("/monitor/hit_rate"))
                 .andExpect(status().isOk())
