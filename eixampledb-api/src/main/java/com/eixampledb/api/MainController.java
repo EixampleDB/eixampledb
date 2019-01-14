@@ -4,6 +4,7 @@ import com.eixampledb.core.CoreServices;
 import com.eixampledb.core.api.EixampleDb;
 import com.eixampledb.core.api.Operation;
 import com.eixampledb.core.api.ValueType;
+import com.eixampledb.core.api.SearchType;
 import com.eixampledb.core.api.request.*;
 import com.eixampledb.core.api.response.DeleteResponse;
 import com.eixampledb.core.api.response.GetResponse;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -34,19 +36,22 @@ public class MainController {
     @RequestMapping(path = "/{key}", method = RequestMethod.POST)
     public ResponseEntity set(@PathVariable("key") String key,
                               @RequestBody String value,
-                              @RequestHeader(name = "type", defaultValue = "STR", required = false) ValueType valueType) {
-        eixampledb.set(new SetRequest(key, value, valueType));
+                              @RequestHeader(name = "type", defaultValue = "STR", required = false) ValueType valueType,
+                              @RequestHeader (name = "search", defaultValue = "DEF", required = false) SearchType searchType ) {
+
+        eixampledb.set(new SetRequest(key, value, valueType, searchType));
         return ResponseEntity.ok().build();
     }
 
     @RequestMapping(path = "/{key}", method = RequestMethod.PUT)
     public ResponseEntity operation(@PathVariable("key") String key,
-                                    @RequestHeader(value = "op") Operation operation) {
+                                    @RequestHeader(value = "op") Operation operation,
+                                    @RequestHeader(name = "search", defaultValue = "DEF", required = false) SearchType searchType ) {
         Response<?> response;
         if (operation.isDecrement()) {
-            response = eixampledb.decr(new DecrRequest(key));
+            response = eixampledb.decr(new DecrRequest(key,searchType));
         } else if (operation.isIncrement()) {
-            response = eixampledb.incr(new IncrRequest(key));
+            response = eixampledb.incr(new IncrRequest(key,searchType));
         } else {
             throw new UnsupportedOperationException("Unsupported operaton " + operation.name());
         }
@@ -58,8 +63,9 @@ public class MainController {
     }
 
     @RequestMapping(path = "/{key}", method = RequestMethod.DELETE)
-    public ResponseEntity delete(@PathVariable("key") String key) {
-        DeleteResponse deleteResponse = eixampledb.delete(new DeleteRequest(key));
+    public ResponseEntity delete(@PathVariable("key") String key,
+                                 @RequestHeader (name = "search", defaultValue = "DEF", required = false) SearchType searchType ) {
+        DeleteResponse deleteResponse = eixampledb.delete(new DeleteRequest(key, searchType));
         if (deleteResponse.isSuccess()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {

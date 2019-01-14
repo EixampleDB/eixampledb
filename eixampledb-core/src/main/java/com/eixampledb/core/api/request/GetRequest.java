@@ -1,5 +1,6 @@
 package com.eixampledb.core.api.request;
 
+import com.eixampledb.core.api.SearchType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

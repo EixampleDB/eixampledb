@@ -1,5 +1,6 @@
 package com.eixampledb.core.api;
 
+
 public class EixampleDbEntry {
 
     private final String key;
