@@ -1,11 +1,6 @@
 package com.eixampledb.core.api;
-
-import com.eixampledb.core.api.request.DeleteRequest;
-import com.eixampledb.core.api.request.GetRequest;
-import com.eixampledb.core.api.request.SetRequest;
-import com.eixampledb.core.api.response.DeleteResponse;
-import com.eixampledb.core.api.response.GetResponse;
-import com.eixampledb.core.api.response.SetResponse;
+import com.eixampledb.core.api.request.*;
+import com.eixampledb.core.api.response.*;
 
 public interface EixampleDb {
 
@@ -13,6 +8,12 @@ public interface EixampleDb {
 
     SetResponse set(SetRequest setRequest);
 
+    IncrResponse incr(IncrRequest incrRequest);
+
+    DecrResponse decr(DecrRequest decrRequest);
+
     DeleteResponse delete(DeleteRequest deleteRequest);
+
+    BulkResponse bulkOperation(BulkRequest bulkRequest);
 
 }
