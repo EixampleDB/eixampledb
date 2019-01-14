@@ -17,14 +17,12 @@ public class LatencyMonitoringMiddleware implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         long startTime = System.currentTimeMillis();
-        System.out.println("Start Time: " + System.currentTimeMillis());
         request.setAttribute("startTime", startTime);
         return true;
     }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        System.out.println("Post Handle method is Calling");
     }
 
     @Override
@@ -33,6 +31,5 @@ public class LatencyMonitoringMiddleware implements HandlerInterceptor {
         long endTime = System.currentTimeMillis();
 
         performanceMonitoringService.updateLatency(endTime - startTime);
-        System.out.println("Latency: " + (performanceMonitoringService.getLatency()));
     }
 }
